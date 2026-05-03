@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Método Consistente — TraderBase</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060a;
+  --surface: #0d0d14;
+  --surface2: #13131e;
+  --gold: #d4a73a;
+  --gold-dim: rgba(212,167,58,0.08);
+  --gold-mid: rgba(212,167,58,0.2);
+  --gold-light: #e8c060;
+  --text: #ede8df;
+  --text-mid: #7a7570;
+  --text-dim: #3a3530;
+  --border: rgba(255,255,255,0.06);
+  --red: #e84040;
+  --green: #2ecc8a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* NOISE */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(6,6,10,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.nav-mark {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-inner {
+  width: 24px; height: 24px;
+  border-radius: 5px;
+  background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-letters { font-size: 10px; font-weight: 500; color: var(--bg); letter-spacing: -0.02em; }
+.nav-name { font-size: 16px; font-weight: 500; color: var(--text); letter-spacing: -0.01em; }
+.nav-cta {
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  padding: 10px 22px;
+  border-radius: 5px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.nav-cta:hover { opacity: 0.88; }
+
+/* SECTIONS */
+section { position: relative; z-index: 1; }
+
+.container { max-width: 960px; margin: 0 auto; padding: 0 32px; }
+.container-sm { max-width: 720px; margin: 0 auto; padding: 0 32px; }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 80px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(212,167,58,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,167,58,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.hero-glow {
+  position: absolute;
+  top: -200px; left: 50%;
+  transform: translateX(-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(212,167,58,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid rgba(212,167,58,0.3);
+  padding: 6px 14px;
+  border-radius: 3px;
+  margin-bottom: 28px;
+}
+.hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; }
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(52px, 8vw, 96px);
+  letter-spacing: 0.03em;
+  line-height: 0.92;
+  margin-bottom: 28px;
+}
+.hero-title .gold { color: var(--gold); }
+.hero-title .italic { font-style: italic; }
+.hero-sub {
+  font-size: 18px;
+  color: var(--text-mid);
+  line-height: 1.7;
+  max-width: 520px;
+  margin-bottom: 40px;
+}
+.hero-sub strong { color: var(--text); font-weight: 500; }
+.hero-cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-secondary {
+  color: var(--text-mid);
+  font-size: 13px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s;
+}
+.btn-secondary:hover { color: var(--text); }
+.hero-proof {
+  margin-top: 56px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.hero-proof-item {}
+.hero-proof-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.hero-proof-label { font-size: 12px; color: var(--text-mid); letter-spacing: 0.04em; }
+
+/* ─── NOT FOR ─── */
+.not-for { padding: 80px 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.section-eyebrow {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 5vw, 56px);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  margin-bottom: 14px;
+}
+.section-sub { font-size: 15px; color: var(--text-mid); max-width: 520px; margin-bottom: 40px; line-height: 1.6; }
+
+.not-for-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.not-for-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.not-for-icon {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  margin-top: 1px;
+}
+.not-for-icon.no { background: rgba(232,64,64,0.1); color: var(--red); }
+.not-for-icon.yes { background: rgba(46,204,138,0.1); color: var(--green); }
+.not-for-text { font-size: 13px; color: var(--text-mid); line-height: 1.5; }
+.not-for-text strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 2px; }
+
+/* ─── PILLARS ─── */
+.pillars { padding: 100px 0; }
+.pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 48px; }
+.pillar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.pillar:hover { border-color: rgba(212,167,58,0.25); }
+.pillar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gold);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.pillar:hover::before { opacity: 1; }
+.pillar-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  color: rgba(212,167,58,0.12);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.pillar-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+.pillar-desc { font-size: 13px; color: var(--text-mid); line-height: 1.6; margin-bottom: 16px; }
+.pillar-items { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.pillar-items li { font-size: 12px; color: var(--text-mid); display: flex; gap: 8px; }
+.pillar-items li::before { content: '◆'; color: var(--gold); font-size: 7px; flex-shrink: 0; margin-top: 5px; }
+
+/* ─── INCLUDES ─── */
+.includes { padding: 100px 0; background: var(--surface); border-top: 1px solid var(--border); }
+.includes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 48px; }
+.include-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px 24px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.include-icon {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+.include-body {}
+.include-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.include-desc { font-size: 12px; color: var(--text-mid); line-height: 1.5; }
+
+.value-stack {
+  margin-top: 40px;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold-mid);
+  border-radius: 10px;
+  padding: 24px 28px;
+}
+.value-stack-title { font-size: 13px; color: var(--text-mid); margin-bottom: 14px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+.value-items { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.value-items li { font-size: 13px; color: var(--text-mid); display: flex; justify-content: space-between; gap: 16px; }
+.value-items li::before { content: '✓'; color: var(--green); flex-shrink: 0; font-size: 11px; margin-top: 3px; }
+.value-items li span { color: var(--text-dim); font-size: 12px; text-align: right; }
+.value-divider { border: none; border-top: 1px solid var(--gold-mid); margin: 14px 0; }
+.value-total-row { display: flex; justify-content: space-between; align-items: baseline; }
+.value-total-label { font-size: 12px; color: var(--text-mid); text-decoration: line-through; }
+.value-total-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.value-total-note { font-size: 11px; color: var(--text-mid); text-align: right; margin-top: 4px; }
+
+/* ─── CREDIBILITY ─── */
+.credibility { padding: 100px 0; }
+.cred-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; margin-top: 48px; }
+.cred-text {}
+.cred-points { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+.cred-point { display: flex; gap: 14px; align-items: flex-start; }
+.cred-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 8px; }
+.cred-point-text { font-size: 14px; color: var(--text-mid); line-height: 1.6; }
+.cred-point-text strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 2px; }
+.cred-visual {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+}
+.cred-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cred-stat {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px;
+  text-align: center;
+}
+.cred-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.cred-stat-label { font-size: 11px; color: var(--text-mid); line-height: 1.4; }
+.cred-note {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ─── FAQ ─── */
+.faq { padding: 100px 0; background: var(--surface); border-top: 1px solid var(--border); }
+.faq-list { margin-top: 48px; display: flex; flex-direction: column; gap: 0; }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-q {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 22px 0;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.faq-q:hover { color: var(--gold); }
+.faq-arrow { color: var(--gold); font-size: 18px; flex-shrink: 0; transition: transform 0.25s; }
+.faq-item.open .faq-arrow { transform: rotate(45deg); }
+.faq-a {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.7;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.25s;
+}
+.faq-item.open .faq-a { max-height: 300px; padding-bottom: 20px; }
+
+/* ─── CTA FINAL ─── */
+.cta-final {
+  padding: 120px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-final-glow {
+  position: absolute;
+  bottom: -200px; left: 50%;
+  transform: translateX(-50%);
+  width: 700px; height: 500px;
+  background: radial-gradient(circle, rgba(212,167,58,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-final-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(44px, 6vw, 72px);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  margin-bottom: 18px;
+}
+.cta-final-title .gold { color: var(--gold); }
+.cta-final-sub { font-size: 16px; color: var(--text-mid); max-width: 480px; margin: 0 auto 40px; line-height: 1.6; }
+.cta-price-row { display: flex; align-items: baseline; justify-content: center; gap: 12px; margin-bottom: 28px; }
+.cta-price-old { font-size: 18px; color: var(--text-dim); text-decoration: line-through; }
+.cta-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 64px;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.cta-price-note { font-size: 14px; color: var(--text-mid); margin-bottom: 32px; }
+.cta-final-fine {
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-dim);
+  flex-wrap: wrap;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+footer a { color: var(--text-dim); text-decoration: none; }
+footer a:hover { color: var(--text-mid); }
+
+/* DIVIDER */
+.section-divider { border: none; border-top: 1px solid var(--border); }
+
+/* ANIM */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { opacity: 0; animation: fadeUp 0.6s ease forwards; }
+.fade-up:nth-child(1) { animation-delay: 0.05s; }
+.fade-up:nth-child(2) { animation-delay: 0.15s; }
+.fade-up:nth-child(3) { animation-delay: 0.25s; }
+
+@media (max-width: 768px) {
+  nav { padding: 14px 20px; }
+  .container, .container-sm { padding: 0 20px; }
+  .not-for-grid, .pillars-grid, .includes-grid, .cred-grid { grid-template-columns: 1fr; }
+  .cred-grid { gap: 24px; }
+  .hero-proof { gap: 24px; }
+  footer { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-mark"><div class="nav-inner"><span class="nav-letters">TB</span></div></div>
+    <span class="nav-name">TraderBase</span>
+  </a>
+  <a class="nav-cta" href="#comprar">Acceder al curso →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-tag fade-up">Método Consistente</div>
+      <h1 class="hero-title fade-up">
+        De operar<br>
+        por <span class="gold">emoción</span><br>
+        a operar por<br>
+        <span class="gold">proceso</span>
+      </h1>
+      <p class="hero-sub fade-up">
+        La formación que trabaja <strong>la causa real</strong> de tu inconsistencia — no los síntomas. Sin señales. Sin promesas de rentabilidad garantizada. Solo el proceso que funciona.
+      </p>
+      <div class="hero-cta-row fade-up">
+        <a class="btn-primary" href="#comprar">Quiero empezar →</a>
+        <a class="btn-secondary" href="#incluye">Ver qué incluye ↓</a>
+      </div>
+      <div class="hero-proof">
+        <div class="hero-proof-item">
+          <div class="hero-proof-num">Fondeo</div>
+          <div class="hero-proof-label">Estrategia de inversión en cuentas de fondeo</div>
+        </div>
+        <div class="hero-proof-item">
+          <div class="hero-proof-num">Método</div>
+          <div class="hero-proof-label">Propio y definido de análisis de precio</div>
+        </div>
+        <div class="hero-proof-item">
+          <div class="hero-proof-num">2 meses</div>
+          <div class="hero-proof-label">Seguimiento personal incluido</div>
+        </div>
+        <div class="hero-proof-item">
+          <div class="hero-proof-num">∞</div>
+          <div class="hero-proof-label">Acceso de por vida</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NOT FOR / FOR -->
+<section class="not-for">
+  <div class="container">
+    <div class="section-eyebrow">Antes de continuar</div>
+    <h2 class="section-title">Esto no es para todo el mundo</h2>
+    <p class="section-sub">Sé honesto contigo mismo antes de entrar. Esto importa.</p>
+    <div class="not-for-grid">
+      <div class="not-for-card">
+        <div class="not-for-icon no">✕</div>
+        <div class="not-for-text"><strong>No es para ti si buscas señales</strong>Aquí no te digo cuándo comprar ni cuándo vender. Eso no existe.</div>
+      </div>
+      <div class="not-for-card">
+        <div class="not-for-icon yes">✓</div>
+        <div class="not-for-text"><strong>Es para ti si llevas tiempo operando sin consistencia</strong>Conoces conceptos, tienes rachas buenas — pero algo siempre falla.</div>
+      </div>
+      <div class="not-for-card">
+        <div class="not-for-icon no">✕</div>
+        <div class="not-for-text"><strong>No es para ti si buscas hacerte rico rápido</strong>No hay porcentajes garantizados. No hay atajos. No hay magia.</div>
+      </div>
+      <div class="not-for-card">
+        <div class="not-for-icon yes">✓</div>
+        <div class="not-for-text"><strong>Es para ti si quieres empezar bien desde el principio</strong>Sin pasar años probando cosas aleatorias sin saber por qué fallan.</div>
+      </div>
+      <div class="not-for-card">
+        <div class="not-for-icon no">✕</div>
+        <div class="not-for-text"><strong>No es para ti si quieres que alguien lo haga por ti</strong>Esto requiere trabajo, aplicación y honestidad contigo mismo.</div>
+      </div>
+      <div class="not-for-card">
+        <div class="not-for-icon yes">✓</div>
+        <div class="not-for-text"><strong>Es para ti si sabes lo que tienes que hacer pero no lo ejecutas</strong>"Sé lo que tengo que hacer pero no lo hago" — eso es exactamente lo que resolvemos.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<section class="pillars">
+  <div class="container">
+    <div class="section-eyebrow">Lo que realmente necesitas</div>
+    <h2 class="section-title">Los 3 pilares del trader consistente</h2>
+    <p class="section-sub">No es falta de conocimiento. Es falta de estos tres elementos trabajando juntos.</p>
+    <div class="pillars-grid">
+      <div class="pillar">
+        <div class="pillar-num">01</div>
+        <div class="pillar-title">Psicología y sistema nervioso</div>
+        <div class="pillar-desc">La causa real de tus errores no es tu estrategia. Es lo que pasa dentro de ti cuando hay dinero real de por medio.</div>
+        <ul class="pillar-items">
+          <li>Por qué tu cerebro sabotea tu ejecución</li>
+          <li>Cómo regular el sistema nervioso antes de operar</li>
+          <li>La secuencia del error — y cómo cortarla</li>
+          <li>Proactividad vs reactividad en la sesión</li>
+        </ul>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">02</div>
+        <div class="pillar-title">Estrategia de análisis de precio</div>
+        <div class="pillar-desc">Una metodología propia, definida y clara con dos modelos de entrada. Si ya tienes la tuya, úsala. Si no, esta te sirve de base sólida.</div>
+        <ul class="pillar-items">
+          <li>Estructura de mercado y sesgo del día</li>
+          <li>Liquidez interna y externa</li>
+          <li>Zonas de desequilibrio — cómo y cuándo usarlas</li>
+          <li>Dos modelos de entrada con ejemplos reales</li>
+        </ul>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">03</div>
+        <div class="pillar-title">Sistema y proceso propio</div>
+        <div class="pillar-desc">Un método sin sistema es solo teoría. Aquí construyes tu propio proceso repetible — independiente de tu estado emocional.</div>
+        <ul class="pillar-items">
+          <li>Horario de trading y reglas no negociables</li>
+          <li>Gestión del riesgo por operación</li>
+          <li>Cómo medir tu progreso de verdad</li>
+          <li>Revisiones mensuales y trimestrales</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INCLUDES -->
+<section class="includes" id="incluye">
+  <div class="container">
+    <div class="section-eyebrow">Qué obtienes</div>
+    <h2 class="section-title">Todo lo que incluye el Método Consistente</h2>
+    <p class="section-sub">Sin relleno. Sin módulos de padding. Solo lo que necesitas para operar con proceso.</p>
+    <div class="includes-grid">
+      <div class="include-item">
+        <div class="include-icon">🎓</div>
+        <div class="include-body">
+          <div class="include-title">Formación completa en vídeo</div>
+          <div class="include-desc">4 módulos. Psicología, estrategia de análisis de precio, sistema y procesos, revisiones. Acceso de por vida — vuelve cuando quieras.</div>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">💬</div>
+        <div class="include-body">
+          <div class="include-title">2 meses de seguimiento personal por privado</div>
+          <div class="include-desc">No es un adorno. Es la parte más valiosa. Tus dudas concretas, respondidas por mí directamente.</div>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">👥</div>
+        <div class="include-body">
+          <div class="include-title">Acceso a la comunidad Skool</div>
+          <div class="include-desc">Análisis diario de lunes a viernes. Directos los lunes y jueves. Canal privado de seguimiento para alumnos.</div>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">📊</div>
+        <div class="include-body">
+          <div class="include-title">Recursos y herramientas prácticas</div>
+          <div class="include-desc">Analizador de patrones de ejecución, recurso de las 4 etapas, checklist de sesión. Todo aplicable desde el primer día.</div>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">🔄</div>
+        <div class="include-body">
+          <div class="include-title">Actualizaciones incluidas para siempre</div>
+          <div class="include-desc">El curso se actualiza. Nuevas lecciones, mejoras de contenido — sin coste adicional.</div>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">🎯</div>
+        <div class="include-body">
+          <div class="include-title">Módulo base para principiantes</div>
+          <div class="include-desc">Qué es el trading, TradingView, MetaTrader y velas japonesas. Para quien empieza desde cero.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="value-stack" id="comprar">
+      <div class="value-stack-title">Resumen de lo que obtienes</div>
+      <ul class="value-items">
+        <li>Formación completa en vídeo (acceso de por vida) <span>Valor alto</span></li>
+        <li>2 meses de seguimiento personal por privado <span>Lo más valioso</span></li>
+        <li>Comunidad con directos semanales <span>Incluido</span></li>
+        <li>Recursos y herramientas prácticas <span>Incluido</span></li>
+        <li>Actualizaciones para siempre <span>Incluido</span></li>
+      </ul>
+      <hr class="value-divider">
+      <div class="value-total-row">
+        <div>
+          <div class="value-total-label">Precio de lanzamiento</div>
+          <div style="margin-top:8px;"><a class="btn-primary" href="https://hotmart.com" style="display:inline-block;">Acceder ahora por 297€ →</a></div>
+        </div>
+        <div style="text-align:right;">
+          <div class="value-total-price">297€</div>
+          <div class="value-total-note">Pago único · Sin suscripción</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CREDIBILITY -->
+<section class="credibility">
+  <div class="container">
+    <div class="section-eyebrow">Quién está detrás</div>
+    <h2 class="section-title">No soy otro gurú de trading</h2>
+    <div class="cred-grid">
+      <div class="cred-text">
+        <ul class="cred-points">
+          <li class="cred-point">
+            <div class="cred-dot"></div>
+            <div class="cred-point-text">
+              <strong>Estrategia de inversión en cuentas de fondeo</strong>
+              Opera con una metodología propia y definida. No enseño lo que no aplico.
+            </div>
+          </li>
+          <li class="cred-point">
+            <div class="cred-dot"></div>
+            <div class="cred-point-text">
+              <strong>Pasé por lo mismo que tú</strong>
+              2 años de autosaboteo constante hasta entender qué estaba pasando dentro de mí. Eso es exactamente lo que enseño aquí.
+            </div>
+          </li>
+          <li class="cred-point">
+            <div class="cred-dot"></div>
+            <div class="cred-point-text">
+              <strong>Consistencia demostrada, no pantallas cherry-picked</strong>
+              Comparto semanas reales — con pérdidas, con errores y con el proceso detrás de cada decisión.
+            </div>
+          </li>
+          <li class="cred-point">
+            <div class="cred-dot"></div>
+            <div class="cred-point-text">
+              <strong>El seguimiento personal no es un adorno</strong>
+              Es la parte más valiosa del curso. Tus dudas concretas, respondidas directamente por mí durante 2 meses.
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="cred-visual">
+        <div class="cred-stat-grid">
+          <div class="cred-stat">
+            <div class="cred-stat-num">Fondeo</div>
+            <div class="cred-stat-label">Estrategia en cuentas de fondeo</div>
+          </div>
+          <div class="cred-stat">
+            <div class="cred-stat-num">Precio</div>
+            <div class="cred-stat-label">Metodología propia aplicada a diario</div>
+          </div>
+          <div class="cred-stat">
+            <div class="cred-stat-num">2m</div>
+            <div class="cred-stat-label">Seguimiento personal incluido</div>
+          </div>
+          <div class="cred-stat">
+            <div class="cred-stat-num">∞</div>
+            <div class="cred-stat-label">Acceso de por vida al contenido</div>
+          </div>
+        </div>
+        <div class="cred-note">El contenido del canal y la comunidad son la prueba. Mira el proceso antes de decidir.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container-sm">
+    <div class="section-eyebrow">Preguntas frecuentes</div>
+    <h2 class="section-title">Resuelve tus dudas</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Para quién es exactamente este curso?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">Para dos perfiles: el principiante que quiere construir una base sólida desde el principio sin pasar años probando cosas aleatorias, y el trader con experiencia que tiene rachas buenas pero no consigue ser consistente. Si te identificas con "sé lo que tengo que hacer pero no lo ejecuto" — esto es para ti.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Necesito experiencia previa en trading?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">No. El curso incluye un módulo base de nivel 0 con todo lo necesario para empezar: qué es el trading, TradingView, MetaTrader y velas japonesas. Si ya tienes experiencia, puedes saltarte ese módulo e ir directamente al contenido más avanzado.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Qué incluye el seguimiento personal de 2 meses?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">Acceso directo a mí por privado durante 2 meses. No es un chat grupal — son tus dudas concretas respondidas directamente por mí. Una operación que no entiendes, un patrón de error que se repite, una situación específica de tu trading. Eso es lo que resolvemos.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Puedo usar mi propia estrategia?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">Sí. La estrategia ICT que incluyo es una base — si ya tienes la tuya, puedes usarla. El núcleo del curso es la psicología, el sistema y el proceso de ejecución. Eso funciona con cualquier estrategia.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Hay garantía de resultados?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">No. Nadie puede garantizar resultados en trading. Lo que sí te garantizo es que todo lo que hay en este curso es lo que me llevó a operar de forma consistente. Lo que hagas con ello depende de ti.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Cuánto tiempo tengo acceso al contenido?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">De por vida. El curso, los recursos y todas las actualizaciones futuras. Sin suscripción adicional — pagas una vez y accedes siempre.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Hay devoluciones?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">No. El conocimiento, los recursos, el acceso a la comunidad y el seguimiento personal son entregados desde el primer día. Por eso no hay devoluciones. Antes de entrar, mira el contenido del canal — ahí puedes evaluar si esto es lo que buscas.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div class="cta-final-glow"></div>
+  <div class="container-sm" style="position:relative;z-index:1;">
+    <div class="section-eyebrow" style="justify-content:center;">Empieza hoy</div>
+    <h2 class="cta-final-title">De cero a <span class="gold">consistentemente</span> rentable</h2>
+    <p class="cta-final-sub">Un proceso claro que puedes ejecutar igual cada día, independientemente de cómo te sientas.</p>
+    <div class="cta-price-row">
+      <div class="cta-price">297€</div>
+    </div>
+    <div class="cta-price-note">Pago único · Acceso de por vida · 2 meses de seguimiento personal</div>
+    <a class="btn-primary" href="https://hotmart.com" style="font-size:16px;padding:18px 44px;">Acceder al Método Consistente →</a>
+    <div class="cta-final-fine">
+      Sin suscripción. Sin pagos recurrentes. Sin garantías de rentabilidad.<br>
+      Si tienes dudas antes de entrar, escríbeme directamente.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>© 2025 TraderBase · Método Consistente</div>
+  <div style="display:flex;gap:20px;">
+    <a href="#">Política de privacidad</a>
+    <a href="#">Aviso legal</a>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+
+</body>
+</html>
