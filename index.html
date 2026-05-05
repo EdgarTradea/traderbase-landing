@@ -3,18 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Método Consistente — TraderBase</title>
+<title>Neurotrading — Método Consistente | TraderBase</title>
+<meta name="description" content="Neurotrading es el primer método en español que entrena la regulación fisiológica del trader antes que la estrategia técnica. Porque sabes lo que tienes que hacer. Y aun así no lo haces.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #06060a;
-  --surface: #0d0d14;
+  --bg: #09090f;
+  --surface: #0d0d16;
   --surface2: #13131e;
   --gold: #d4a73a;
-  --gold-dim: rgba(212,167,58,0.08);
+  --gold-dim: rgba(212,167,58,0.07);
   --gold-mid: rgba(212,167,58,0.2);
   --gold-light: #e8c060;
-  --text: #ede8df;
+  --text: #f0ece4;
   --text-mid: #7a7570;
   --text-dim: #3a3530;
   --border: rgba(255,255,255,0.06);
@@ -33,7 +36,6 @@ body {
   overflow-x: hidden;
 }
 
-/* NOISE */
 body::before {
   content: '';
   position: fixed;
@@ -43,7 +45,7 @@ body::before {
   z-index: 0;
 }
 
-/* NAV */
+/* ── NAV ── */
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -52,8 +54,8 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(6,6,10,0.92);
-  backdrop-filter: blur(12px);
+  background: rgba(9,9,15,0.93);
+  backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
 }
 .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
@@ -83,74 +85,16 @@ nav {
   cursor: pointer;
   text-decoration: none;
   transition: opacity 0.2s;
+  white-space: nowrap;
 }
 .nav-cta:hover { opacity: 0.88; }
 
-/* SECTIONS */
+/* ── LAYOUT ── */
 section { position: relative; z-index: 1; }
-
 .container { max-width: 960px; margin: 0 auto; padding: 0 32px; }
 .container-sm { max-width: 720px; margin: 0 auto; padding: 0 32px; }
 
-/* ─── HERO ─── */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  padding-top: 80px;
-  position: relative;
-  overflow: hidden;
-}
-.hero-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(212,167,58,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(212,167,58,0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
-}
-.hero-glow {
-  position: absolute;
-  top: -200px; left: 50%;
-  transform: translateX(-50%);
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(212,167,58,0.06) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero-content { position: relative; z-index: 1; }
-.hero-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--gold);
-  border: 1px solid rgba(212,167,58,0.3);
-  padding: 6px 14px;
-  border-radius: 3px;
-  margin-bottom: 28px;
-}
-.hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; }
-.hero-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(52px, 8vw, 96px);
-  letter-spacing: 0.03em;
-  line-height: 0.92;
-  margin-bottom: 28px;
-}
-.hero-title .gold { color: var(--gold); }
-.hero-title .italic { font-style: italic; }
-.hero-sub {
-  font-size: 18px;
-  color: var(--text-mid);
-  line-height: 1.7;
-  max-width: 520px;
-  margin-bottom: 40px;
-}
-.hero-sub strong { color: var(--text); font-weight: 500; }
-.hero-cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+/* ── BUTTONS ── */
 .btn-primary {
   background: var(--gold);
   color: var(--bg);
@@ -163,43 +107,19 @@ section { position: relative; z-index: 1; }
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
-  transition: opacity 0.2s, transform 0.2s;
+  transition: opacity 0.2s, transform 0.15s;
 }
 .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-.btn-secondary {
-  color: var(--text-mid);
-  font-size: 13px;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: color 0.2s;
+.btn-primary-lg {
+  font-size: 16px;
+  padding: 18px 44px;
 }
-.btn-secondary:hover { color: var(--text); }
-.hero-proof {
-  margin-top: 56px;
-  padding-top: 32px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  gap: 40px;
-  flex-wrap: wrap;
-}
-.hero-proof-item {}
-.hero-proof-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 36px;
-  color: var(--gold);
-  letter-spacing: 0.04em;
-  line-height: 1;
-}
-.hero-proof-label { font-size: 12px; color: var(--text-mid); letter-spacing: 0.04em; }
 
-/* ─── NOT FOR ─── */
-.not-for { padding: 80px 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+/* ── SECTION COMMON ── */
 .section-eyebrow {
   font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: 14px;
@@ -207,46 +127,182 @@ section { position: relative; z-index: 1; }
   align-items: center;
   gap: 10px;
 }
-.section-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+.section-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--gold); flex-shrink: 0; }
 .section-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(36px, 5vw, 56px);
+  font-size: clamp(36px, 5vw, 58px);
   letter-spacing: 0.04em;
   line-height: 1;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
-.section-sub { font-size: 15px; color: var(--text-mid); max-width: 520px; margin-bottom: 40px; line-height: 1.6; }
+.section-sub { font-size: 15px; color: var(--text-mid); max-width: 540px; margin-bottom: 40px; line-height: 1.65; }
 
-.not-for-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.not-for-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 18px 20px;
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-.not-for-icon {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  flex-shrink: 0;
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  margin-top: 1px;
+  padding: 120px 0 80px;
+  position: relative;
+  overflow: hidden;
 }
-.not-for-icon.no { background: rgba(232,64,64,0.1); color: var(--red); }
-.not-for-icon.yes { background: rgba(46,204,138,0.1); color: var(--green); }
-.not-for-text { font-size: 13px; color: var(--text-mid); line-height: 1.5; }
-.not-for-text strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 2px; }
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(212,167,58,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,167,58,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.hero-glow {
+  position: absolute;
+  top: -180px; left: 50%;
+  transform: translateX(-50%);
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(212,167,58,0.05) 0%, transparent 68%);
+  pointer-events: none;
+}
+.hero-content { position: relative; z-index: 1; max-width: 680px; }
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid rgba(212,167,58,0.3);
+  padding: 6px 14px;
+  border-radius: 3px;
+  margin-bottom: 28px;
+}
+.hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+.hero-h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(56px, 9vw, 104px);
+  letter-spacing: 0.02em;
+  line-height: 0.9;
+  margin-bottom: 16px;
+}
+.hero-h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 5.5vw, 64px);
+  letter-spacing: 0.03em;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 28px;
+}
+.hero-sub {
+  font-size: 17px;
+  color: var(--text-mid);
+  line-height: 1.75;
+  max-width: 540px;
+  margin-bottom: 40px;
+}
+.hero-sub strong { color: var(--text); font-weight: 500; }
+.hero-cta-block { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.hero-cta-note { font-size: 12px; color: var(--text-dim); }
+.hero-proof {
+  margin-top: 60px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.hero-proof-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 34px;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.hero-proof-label { font-size: 12px; color: var(--text-mid); margin-top: 2px; }
 
-/* ─── PILLARS ─── */
-.pillars { padding: 100px 0; }
-.pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 48px; }
-.pillar {
+/* ── SÍNTOMAS ── */
+.symptoms {
+  padding: 88px 0;
   background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.symptoms-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 36px;
+}
+.symptom-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+.symptom-item:last-child { border-bottom: none; }
+.symptom-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+  margin-top: 9px;
+}
+.symptom-text { font-size: 15px; color: var(--text-mid); line-height: 1.6; }
+.symptom-text strong { color: var(--text); font-weight: 500; }
+.symptoms-close {
+  margin-top: 36px;
+  padding: 20px 24px;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold-mid);
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* ── REFRAME ── */
+.reframe { padding: 100px 0; }
+.reframe-body {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.reframe-p { font-size: 16px; color: var(--text-mid); line-height: 1.8; }
+.reframe-p strong { color: var(--text); font-weight: 500; }
+.reframe-pullquote {
+  margin: 12px 0;
+  padding: 24px 28px;
+  border-left: 3px solid var(--gold);
+  background: var(--gold-dim);
+  border-radius: 0 8px 8px 0;
+  font-size: 17px;
+  color: var(--text);
+  line-height: 1.65;
+  font-style: italic;
+}
+
+/* ── NEUROTRADING ── */
+.neurotrading {
+  padding: 100px 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.nt-intro {
+  margin-top: 40px;
+  margin-bottom: 52px;
+  font-size: 16px;
+  color: var(--text-mid);
+  line-height: 1.75;
+  max-width: 640px;
+}
+.nt-intro strong { color: var(--text); font-weight: 500; }
+.pillars-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.pillar {
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 28px 24px;
@@ -267,27 +323,19 @@ section { position: relative; z-index: 1; }
 .pillar:hover::before { opacity: 1; }
 .pillar-num {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 48px;
-  color: rgba(212,167,58,0.12);
+  font-size: 44px;
+  color: rgba(212,167,58,0.1);
   line-height: 1;
-  margin-bottom: 12px;
-}
-.pillar-title {
-  font-size: 16px;
-  font-weight: 500;
   margin-bottom: 10px;
-  color: var(--text);
 }
-.pillar-desc { font-size: 13px; color: var(--text-mid); line-height: 1.6; margin-bottom: 16px; }
-.pillar-items { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-.pillar-items li { font-size: 12px; color: var(--text-mid); display: flex; gap: 8px; }
-.pillar-items li::before { content: '◆'; color: var(--gold); font-size: 7px; flex-shrink: 0; margin-top: 5px; }
+.pillar-title { font-size: 15px; font-weight: 500; margin-bottom: 8px; color: var(--text); }
+.pillar-desc { font-size: 13px; color: var(--text-mid); line-height: 1.65; }
 
-/* ─── INCLUDES ─── */
-.includes { padding: 100px 0; background: var(--surface); border-top: 1px solid var(--border); }
-.includes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 48px; }
+/* ── INCLUDES ── */
+.includes { padding: 100px 0; }
+.includes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 44px; }
 .include-item {
-  background: var(--bg);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 22px 24px;
@@ -306,78 +354,56 @@ section { position: relative; z-index: 1; }
   flex-shrink: 0;
   font-size: 18px;
 }
-.include-body {}
-.include-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
-.include-desc { font-size: 12px; color: var(--text-mid); line-height: 1.5; }
-
-.value-stack {
-  margin-top: 40px;
-  background: var(--gold-dim);
-  border: 1px solid var(--gold-mid);
-  border-radius: 10px;
-  padding: 24px 28px;
-}
-.value-stack-title { font-size: 13px; color: var(--text-mid); margin-bottom: 14px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
-.value-items { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
-.value-items li { font-size: 13px; color: var(--text-mid); display: flex; justify-content: space-between; gap: 16px; }
-.value-items li::before { content: '✓'; color: var(--green); flex-shrink: 0; font-size: 11px; margin-top: 3px; }
-.value-items li span { color: var(--text-dim); font-size: 12px; text-align: right; }
-.value-divider { border: none; border-top: 1px solid var(--gold-mid); margin: 14px 0; }
-.value-total-row { display: flex; justify-content: space-between; align-items: baseline; }
-.value-total-label { font-size: 12px; color: var(--text-mid); text-decoration: line-through; }
-.value-total-price {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 48px;
+.include-title { font-size: 14px; font-weight: 500; margin-bottom: 5px; }
+.include-desc { font-size: 12px; color: var(--text-mid); line-height: 1.55; }
+.include-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--gold);
-  letter-spacing: 0.04em;
-  line-height: 1;
+  border: 1px solid rgba(212,167,58,0.3);
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-bottom: 6px;
 }
-.value-total-note { font-size: 11px; color: var(--text-mid); text-align: right; margin-top: 4px; }
 
-/* ─── CREDIBILITY ─── */
-.credibility { padding: 100px 0; }
-.cred-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; margin-top: 48px; }
-.cred-text {}
-.cred-points { list-style: none; display: flex; flex-direction: column; gap: 16px; }
-.cred-point { display: flex; gap: 14px; align-items: flex-start; }
-.cred-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 8px; }
-.cred-point-text { font-size: 14px; color: var(--text-mid); line-height: 1.6; }
-.cred-point-text strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 2px; }
-.cred-visual {
+/* ── FOR / NOT FOR ── */
+.for-not {
+  padding: 100px 0;
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
-.cred-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.cred-stat {
+.for-not-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 40px; }
+.for-not-card {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 18px;
-  text-align: center;
+  border-radius: 10px;
+  padding: 18px 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
 }
-.cred-stat-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 32px;
-  color: var(--gold);
-  letter-spacing: 0.04em;
-  line-height: 1;
-  margin-bottom: 4px;
-}
-.cred-stat-label { font-size: 11px; color: var(--text-mid); line-height: 1.4; }
-.cred-note {
-  margin-top: 14px;
+.fn-icon {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
-  color: var(--text-dim);
-  text-align: center;
-  font-style: italic;
-  line-height: 1.5;
+  margin-top: 1px;
 }
+.fn-icon.no { background: rgba(232,64,64,0.1); color: var(--red); }
+.fn-icon.yes { background: rgba(46,204,138,0.1); color: var(--green); }
+.fn-text { font-size: 13px; color: var(--text-mid); line-height: 1.55; }
+.fn-text strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 3px; }
 
-/* ─── FAQ ─── */
-.faq { padding: 100px 0; background: var(--surface); border-top: 1px solid var(--border); }
-.faq-list { margin-top: 48px; display: flex; flex-direction: column; gap: 0; }
+/* ── FAQ ── */
+.faq { padding: 100px 0; }
+.faq-list { margin-top: 44px; }
 .faq-item { border-bottom: 1px solid var(--border); }
 .faq-q {
   width: 100%;
@@ -394,6 +420,7 @@ section { position: relative; z-index: 1; }
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+  transition: color 0.2s;
 }
 .faq-q:hover { color: var(--gold); }
 .faq-arrow { color: var(--gold); font-size: 18px; flex-shrink: 0; transition: transform 0.25s; }
@@ -401,14 +428,14 @@ section { position: relative; z-index: 1; }
 .faq-a {
   font-size: 14px;
   color: var(--text-mid);
-  line-height: 1.7;
+  line-height: 1.75;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.35s ease, padding 0.25s;
 }
-.faq-item.open .faq-a { max-height: 300px; padding-bottom: 20px; }
+.faq-item.open .faq-a { max-height: 320px; padding-bottom: 22px; }
 
-/* ─── CTA FINAL ─── */
+/* ── CTA FINAL ── */
 .cta-final {
   padding: 120px 0;
   text-align: center;
@@ -417,39 +444,46 @@ section { position: relative; z-index: 1; }
 }
 .cta-final-glow {
   position: absolute;
-  bottom: -200px; left: 50%;
+  bottom: -180px; left: 50%;
   transform: translateX(-50%);
-  width: 700px; height: 500px;
-  background: radial-gradient(circle, rgba(212,167,58,0.07) 0%, transparent 70%);
+  width: 800px; height: 600px;
+  background: radial-gradient(circle, rgba(212,167,58,0.06) 0%, transparent 68%);
   pointer-events: none;
 }
 .cta-final-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(44px, 6vw, 72px);
+  font-size: clamp(44px, 6vw, 76px);
   letter-spacing: 0.04em;
   line-height: 1;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
-.cta-final-title .gold { color: var(--gold); }
-.cta-final-sub { font-size: 16px; color: var(--text-mid); max-width: 480px; margin: 0 auto 40px; line-height: 1.6; }
-.cta-price-row { display: flex; align-items: baseline; justify-content: center; gap: 12px; margin-bottom: 28px; }
-.cta-price-old { font-size: 18px; color: var(--text-dim); text-decoration: line-through; }
+.cta-final-sub { font-size: 16px; color: var(--text-mid); max-width: 500px; margin: 0 auto 44px; line-height: 1.65; }
+.cta-price-block { margin-bottom: 32px; }
 .cta-price {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 64px;
+  font-size: 72px;
   color: var(--gold);
   letter-spacing: 0.04em;
   line-height: 1;
 }
-.cta-price-note { font-size: 14px; color: var(--text-mid); margin-bottom: 32px; }
-.cta-final-fine {
-  margin-top: 20px;
-  font-size: 12px;
-  color: var(--text-dim);
+.cta-price-note { font-size: 13px; color: var(--text-mid); margin-top: 6px; }
+.cta-final-fine { margin-top: 24px; font-size: 12px; color: var(--text-dim); line-height: 1.7; }
+.cta-community {
+  margin-top: 32px;
+  padding: 16px 24px;
+  background: var(--gold-dim);
+  border: 1px solid rgba(212,167,58,0.15);
+  border-radius: 8px;
+  display: inline-block;
+  font-size: 13px;
+  color: var(--text-mid);
   line-height: 1.6;
+  max-width: 460px;
 }
+.cta-community a { color: var(--gold); text-decoration: none; }
+.cta-community a:hover { text-decoration: underline; }
 
-/* FOOTER */
+/* ── FOOTER ── */
 footer {
   border-top: 1px solid var(--border);
   padding: 28px 40px;
@@ -466,26 +500,27 @@ footer {
 footer a { color: var(--text-dim); text-decoration: none; }
 footer a:hover { color: var(--text-mid); }
 
-/* DIVIDER */
-.section-divider { border: none; border-top: 1px solid var(--border); }
-
-/* ANIM */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ── SCROLL ANIMATIONS ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
-.fade-up { opacity: 0; animation: fadeUp 0.6s ease forwards; }
-.fade-up:nth-child(1) { animation-delay: 0.05s; }
-.fade-up:nth-child(2) { animation-delay: 0.15s; }
-.fade-up:nth-child(3) { animation-delay: 0.25s; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
 
+/* ── MOBILE ── */
 @media (max-width: 768px) {
   nav { padding: 14px 20px; }
+  .nav-name { display: none; }
   .container, .container-sm { padding: 0 20px; }
-  .not-for-grid, .pillars-grid, .includes-grid, .cred-grid { grid-template-columns: 1fr; }
-  .cred-grid { gap: 24px; }
+  .hero { padding: 100px 0 60px; }
+  .pillars-grid, .includes-grid, .for-not-grid { grid-template-columns: 1fr; }
   .hero-proof { gap: 24px; }
   footer { flex-direction: column; text-align: center; }
+  .btn-primary-lg { width: 100%; text-align: center; }
 }
 </style>
 </head>
@@ -497,7 +532,7 @@ footer a:hover { color: var(--text-mid); }
     <div class="nav-mark"><div class="nav-inner"><span class="nav-letters">TB</span></div></div>
     <span class="nav-name">TraderBase</span>
   </a>
-  <a class="nav-cta" href="#comprar">Acceder al curso →</a>
+  <a class="nav-cta" href="https://www.skool.com/icp-trading-3989/about">Entrar al Método →</a>
 </nav>
 
 <!-- HERO -->
@@ -506,28 +541,24 @@ footer a:hover { color: var(--text-mid); }
   <div class="hero-glow"></div>
   <div class="container">
     <div class="hero-content">
-      <div class="hero-tag fade-up">Método Consistente</div>
-      <h1 class="hero-title fade-up">
-        De operar<br>
-        por <span class="gold">emoción</span><br>
-        a operar por<br>
-        <span class="gold">proceso</span>
-      </h1>
-      <p class="hero-sub fade-up">
-        La formación que trabaja <strong>la causa real</strong> de tu inconsistencia — no los síntomas. Sin señales. Sin promesas de rentabilidad garantizada. Solo el proceso que funciona.
+      <div class="hero-tag reveal">Neurotrading · Método Consistente</div>
+      <h1 class="hero-h1 reveal reveal-delay-1">El problema no está<br>en el gráfico</h1>
+      <p class="hero-h2 reveal reveal-delay-2">Está en tu sistema nervioso</p>
+      <p class="hero-sub reveal reveal-delay-3">
+        Neurotrading es el primer método en español que entrena <strong>la regulación fisiológica del trader</strong> antes que la estrategia técnica. Porque sabes lo que tienes que hacer. Y aun así no lo haces. Hay una razón concreta para eso — y un protocolo concreto para corregirlo.
       </p>
-      <div class="hero-cta-row fade-up">
-        <a class="btn-primary" href="#comprar">Quiero empezar →</a>
-        <a class="btn-secondary" href="#incluye">Ver qué incluye ↓</a>
+      <div class="hero-cta-block reveal">
+        <a class="btn-primary btn-primary-lg" href="https://www.skool.com/icp-trading-3989/about">Entrar al Método Consistente — 297€</a>
+        <div class="hero-cta-note">Pago único · Acceso de por vida · 2 meses de seguimiento personal</div>
       </div>
-      <div class="hero-proof">
+      <div class="hero-proof reveal">
         <div class="hero-proof-item">
-          <div class="hero-proof-num">Fondeo</div>
-          <div class="hero-proof-label">Estrategia de inversión en cuentas de fondeo</div>
+          <div class="hero-proof-num">8–12 min</div>
+          <div class="hero-proof-label">Protocolo de regulación pre-sesión</div>
         </div>
         <div class="hero-proof-item">
-          <div class="hero-proof-num">Método</div>
-          <div class="hero-proof-label">Propio y definido de análisis de precio</div>
+          <div class="hero-proof-num">4</div>
+          <div class="hero-proof-label">Patrones de desregulación identificados</div>
         </div>
         <div class="hero-proof-item">
           <div class="hero-proof-num">2 meses</div>
@@ -542,218 +573,175 @@ footer a:hover { color: var(--text-mid); }
   </div>
 </section>
 
-<!-- NOT FOR / FOR -->
-<section class="not-for">
-  <div class="container">
-    <div class="section-eyebrow">Antes de continuar</div>
-    <h2 class="section-title">Esto no es para todo el mundo</h2>
-    <p class="section-sub">Sé honesto contigo mismo antes de entrar. Esto importa.</p>
-    <div class="not-for-grid">
-      <div class="not-for-card">
-        <div class="not-for-icon no">✕</div>
-        <div class="not-for-text"><strong>No es para ti si buscas señales</strong>Aquí no te digo cuándo comprar ni cuándo vender. Eso no existe.</div>
-      </div>
-      <div class="not-for-card">
-        <div class="not-for-icon yes">✓</div>
-        <div class="not-for-text"><strong>Es para ti si llevas tiempo operando sin consistencia</strong>Conoces conceptos, tienes rachas buenas — pero algo siempre falla.</div>
-      </div>
-      <div class="not-for-card">
-        <div class="not-for-icon no">✕</div>
-        <div class="not-for-text"><strong>No es para ti si buscas hacerte rico rápido</strong>No hay porcentajes garantizados. No hay atajos. No hay magia.</div>
-      </div>
-      <div class="not-for-card">
-        <div class="not-for-icon yes">✓</div>
-        <div class="not-for-text"><strong>Es para ti si quieres empezar bien desde el principio</strong>Sin pasar años probando cosas aleatorias sin saber por qué fallan.</div>
-      </div>
-      <div class="not-for-card">
-        <div class="not-for-icon no">✕</div>
-        <div class="not-for-text"><strong>No es para ti si quieres que alguien lo haga por ti</strong>Esto requiere trabajo, aplicación y honestidad contigo mismo.</div>
-      </div>
-      <div class="not-for-card">
-        <div class="not-for-icon yes">✓</div>
-        <div class="not-for-text"><strong>Es para ti si sabes lo que tienes que hacer pero no lo ejecutas</strong>"Sé lo que tengo que hacer pero no lo hago" — eso es exactamente lo que resolvemos.</div>
-      </div>
+<!-- SÍNTOMAS -->
+<section class="symptoms">
+  <div class="container-sm">
+    <div class="section-eyebrow reveal">Antes de continuar</div>
+    <h2 class="section-title reveal">Si esto te suena,<br>no es casualidad</h2>
+    <ul class="symptoms-list">
+      <li class="symptom-item reveal">
+        <div class="symptom-dot"></div>
+        <div class="symptom-text">Sabes exactamente lo que tienes que hacer cuando estás operando — y aun así <strong>no lo haces</strong>.</div>
+      </li>
+      <li class="symptom-item reveal">
+        <div class="symptom-dot"></div>
+        <div class="symptom-text">Mueves el stop <strong>"solo un poco"</strong> y cinco minutos después te arrepientes.</div>
+      </li>
+      <li class="symptom-item reveal">
+        <div class="symptom-dot"></div>
+        <div class="symptom-text">Cierras operaciones ganadoras antes de tiempo y <strong>dejas correr las perdedoras</strong>.</div>
+      </li>
+      <li class="symptom-item reveal">
+        <div class="symptom-dot"></div>
+        <div class="symptom-text">Después de una pérdida, abres tres operaciones más <strong>para "recuperar"</strong>.</div>
+      </li>
+      <li class="symptom-item reveal">
+        <div class="symptom-dot"></div>
+        <div class="symptom-text">Operas bien en demo, mal en real. <strong>La diferencia no es la estrategia.</strong></div>
+      </li>
+      <li class="symptom-item reveal">
+        <div class="symptom-dot"></div>
+        <div class="symptom-text">Has comprado más de un curso. <strong>La pieza que te falta no es técnica.</strong></div>
+      </li>
+    </ul>
+    <div class="symptoms-close reveal">
+      Esto no es falta de disciplina. Es algo concreto, identificable, y entrenable.
     </div>
   </div>
 </section>
 
-<!-- PILLARS -->
-<section class="pillars">
+<!-- REFRAME -->
+<section class="reframe">
+  <div class="container-sm">
+    <div class="section-eyebrow reveal">El cambio de perspectiva</div>
+    <h2 class="section-title reveal">Lo que nadie<br>te ha contado</h2>
+    <div class="reframe-body">
+      <p class="reframe-p reveal">El sector del trading vende como si tu problema fuera de información. Otro curso, otro patrón, otra confluencia. Pero llevas años acumulando información y la operativa sigue igual.</p>
+      <div class="reframe-pullquote reveal">El problema no es lo que sabes. El problema es que en el momento exacto en que tienes que ejecutar lo que sabes, tu sistema nervioso entra en estado de amenaza.</div>
+      <p class="reframe-p reveal">Y desde ahí, tu cuerpo toma decisiones que tu mente racional jamás aprobaría. Mover el stop, sobreoperar, cerrar antes — no son fallos de carácter. Son <strong>respuestas automáticas de un cuerpo en estrés</strong>.</p>
+      <p class="reframe-p reveal">Eso significa que la solución no está en pensar mejor. Está en <strong>regular el cuerpo primero</strong>. Y eso se entrena.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NEUROTRADING -->
+<section class="neurotrading">
   <div class="container">
-    <div class="section-eyebrow">Lo que realmente necesitas</div>
-    <h2 class="section-title">Los 3 pilares del trader consistente</h2>
-    <p class="section-sub">No es falta de conocimiento. Es falta de estos tres elementos trabajando juntos.</p>
+    <div class="section-eyebrow reveal">El método</div>
+    <h2 class="section-title reveal">Neurotrading</h2>
+    <p class="section-sub reveal">Regulación fisiológica antes que estrategia técnica</p>
+    <p class="nt-intro reveal">
+      Neurotrading invierte el orden tradicional del trading. En lugar de partir de la estrategia y "luego trabajar la psicología", parte del <strong>estado fisiológico del trader como variable principal</strong>.<br><br>
+      Cuando el cuerpo está regulado, la estrategia técnica se ejecuta sola. Cuando el cuerpo está en amenaza, ningún sistema funciona — por bueno que sea.
+    </p>
     <div class="pillars-grid">
-      <div class="pillar">
+      <div class="pillar reveal">
         <div class="pillar-num">01</div>
-        <div class="pillar-title">Psicología y sistema nervioso</div>
-        <div class="pillar-desc">La causa real de tus errores no es tu estrategia. Es lo que pasa dentro de ti cuando hay dinero real de por medio.</div>
-        <ul class="pillar-items">
-          <li>Por qué tu cerebro sabotea tu ejecución</li>
-          <li>Cómo regular el sistema nervioso antes de operar</li>
-          <li>La secuencia del error — y cómo cortarla</li>
-          <li>Proactividad vs reactividad en la sesión</li>
-        </ul>
+        <div class="pillar-title">Diagnóstico fisiológico</div>
+        <div class="pillar-desc">Aprendes a leer las 7 señales corporales que indican en qué estado entras a operar. No puedes cambiar lo que no puedes detectar.</div>
       </div>
-      <div class="pillar">
+      <div class="pillar reveal reveal-delay-1">
         <div class="pillar-num">02</div>
-        <div class="pillar-title">Estrategia de análisis de precio</div>
-        <div class="pillar-desc">Una metodología propia, definida y clara con dos modelos de entrada. Si ya tienes la tuya, úsala. Si no, esta te sirve de base sólida.</div>
-        <ul class="pillar-items">
-          <li>Estructura de mercado y sesgo del día</li>
-          <li>Liquidez interna y externa</li>
-          <li>Zonas de desequilibrio — cómo y cuándo usarlas</li>
-          <li>Dos modelos de entrada con ejemplos reales</li>
-        </ul>
+        <div class="pillar-title">Regulación previa</div>
+        <div class="pillar-desc">Protocolo de 8-12 minutos antes de cada sesión. Diseñado para los disparadores específicos del trading — no para el estrés genérico.</div>
       </div>
-      <div class="pillar">
+      <div class="pillar reveal">
         <div class="pillar-num">03</div>
-        <div class="pillar-title">Sistema y proceso propio</div>
-        <div class="pillar-desc">Un método sin sistema es solo teoría. Aquí construyes tu propio proceso repetible — independiente de tu estado emocional.</div>
-        <ul class="pillar-items">
-          <li>Horario de trading y reglas no negociables</li>
-          <li>Gestión del riesgo por operación</li>
-          <li>Cómo medir tu progreso de verdad</li>
-          <li>Revisiones mensuales y trimestrales</li>
-        </ul>
+        <div class="pillar-title">Patrones de desregulación</div>
+        <div class="pillar-desc">Los 4 patrones más destructivos — revancha, FOMO, freezing, overtrading — con su firma fisiológica concreta y su intervención específica.</div>
+      </div>
+      <div class="pillar reveal reveal-delay-1">
+        <div class="pillar-num">04</div>
+        <div class="pillar-title">Ejecución técnica</div>
+        <div class="pillar-desc">Estrategia de análisis de precio sencilla y repetible. Es la última pieza, no la primera. Con la base regulada, se ejecuta de otra manera.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- INCLUDES -->
+<!-- INCLUYE -->
 <section class="includes" id="incluye">
   <div class="container">
-    <div class="section-eyebrow">Qué obtienes</div>
-    <h2 class="section-title">Todo lo que incluye el Método Consistente</h2>
-    <p class="section-sub">Sin relleno. Sin módulos de padding. Solo lo que necesitas para operar con proceso.</p>
+    <div class="section-eyebrow reveal">Qué obtienes</div>
+    <h2 class="section-title reveal">El programa completo</h2>
+    <p class="section-sub reveal">Sin módulos de padding. Sin contenido de relleno. Solo lo que necesitas para aplicar desde el primer día.</p>
     <div class="includes-grid">
-      <div class="include-item">
+      <div class="include-item reveal">
         <div class="include-icon">🎓</div>
-        <div class="include-body">
-          <div class="include-title">Formación completa en vídeo</div>
-          <div class="include-desc">4 módulos. Psicología, estrategia de análisis de precio, sistema y procesos, revisiones. Acceso de por vida — vuelve cuando quieras.</div>
+        <div>
+          <div class="include-title">Formación en vídeo — acceso de por vida</div>
+          <div class="include-desc">4 módulos completos: introducción, psicología y ejecución, estrategia, sistema y procesos. Más de 40 lecciones grabadas. Vuelve cuando lo necesites.</div>
         </div>
       </div>
-      <div class="include-item">
+      <div class="include-item reveal reveal-delay-1">
         <div class="include-icon">💬</div>
-        <div class="include-body">
+        <div>
+          <div class="include-badge">Lo más valioso</div>
           <div class="include-title">2 meses de seguimiento personal por privado</div>
-          <div class="include-desc">No es un adorno. Es la parte más valiosa. Tus dudas concretas, respondidas por mí directamente.</div>
+          <div class="include-desc">Feedback individual sobre tu operativa real, tus patrones de desregulación específicos y los ajustes a hacer. Ampliable.</div>
         </div>
       </div>
-      <div class="include-item">
+      <div class="include-item reveal">
         <div class="include-icon">👥</div>
-        <div class="include-body">
-          <div class="include-title">Acceso a la comunidad Skool</div>
-          <div class="include-desc">Análisis diario de lunes a viernes. Directos los lunes y jueves. Canal privado de seguimiento para alumnos.</div>
+        <div>
+          <div class="include-title">Comunidad activa en Skool</div>
+          <div class="include-desc">Análisis diario de mercado de lunes a viernes. Directos los lunes y jueves. Canal de preguntas y canal de wins.</div>
         </div>
       </div>
-      <div class="include-item">
+      <div class="include-item reveal reveal-delay-1">
         <div class="include-icon">📊</div>
-        <div class="include-body">
-          <div class="include-title">Recursos y herramientas prácticas</div>
+        <div>
+          <div class="include-title">Recursos interactivos</div>
           <div class="include-desc">Analizador de patrones de ejecución, recurso de las 4 etapas, checklist de sesión. Todo aplicable desde el primer día.</div>
         </div>
       </div>
-      <div class="include-item">
-        <div class="include-icon">🔄</div>
-        <div class="include-body">
-          <div class="include-title">Actualizaciones incluidas para siempre</div>
-          <div class="include-desc">El curso se actualiza. Nuevas lecciones, mejoras de contenido — sin coste adicional.</div>
-        </div>
-      </div>
-      <div class="include-item">
-        <div class="include-icon">🎯</div>
-        <div class="include-body">
-          <div class="include-title">Módulo base para principiantes</div>
-          <div class="include-desc">Qué es el trading, TradingView, MetaTrader y velas japonesas. Para quien empieza desde cero.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="value-stack" id="comprar">
-      <div class="value-stack-title">Resumen de lo que obtienes</div>
-      <ul class="value-items">
-        <li>Formación completa en vídeo (acceso de por vida) <span>Valor alto</span></li>
-        <li>2 meses de seguimiento personal por privado <span>Lo más valioso</span></li>
-        <li>Comunidad con directos semanales <span>Incluido</span></li>
-        <li>Recursos y herramientas prácticas <span>Incluido</span></li>
-        <li>Actualizaciones para siempre <span>Incluido</span></li>
-      </ul>
-      <hr class="value-divider">
-      <div class="value-total-row">
+      <div class="include-item reveal">
+        <div class="include-icon">🔴</div>
         <div>
-          <div class="value-total-label">Precio de lanzamiento</div>
-          <div style="margin-top:8px;"><a class="btn-primary" href="https://www.skool.com/icp-trading-3989/about" style="display:inline-block;">Acceder ahora por 297€ →</a></div>
+          <div class="include-title">Sesiones en directo grabadas</div>
+          <div class="include-desc">Acceso a todas las sesiones pasadas y futuras. El archivo crece con el programa.</div>
         </div>
-        <div style="text-align:right;">
-          <div class="value-total-price">297€</div>
-          <div class="value-total-note">Pago único · Sin suscripción</div>
+      </div>
+      <div class="include-item reveal reveal-delay-1">
+        <div class="include-icon">🔄</div>
+        <div>
+          <div class="include-title">Actualizaciones incluidas para siempre</div>
+          <div class="include-desc">El curso se actualiza. Nuevas lecciones, mejoras de contenido — sin coste adicional. Pagas una vez, accedes siempre.</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CREDIBILITY -->
-<section class="credibility">
+<!-- PARA QUIÉN ES -->
+<section class="for-not">
   <div class="container">
-    <div class="section-eyebrow">Quién está detrás</div>
-    <h2 class="section-title">No soy otro gurú de trading</h2>
-    <div class="cred-grid">
-      <div class="cred-text">
-        <ul class="cred-points">
-          <li class="cred-point">
-            <div class="cred-dot"></div>
-            <div class="cred-point-text">
-              <strong>Estrategia de inversión en cuentas de fondeo</strong>
-              Opera con una metodología propia y definida. No enseño lo que no aplico.
-            </div>
-          </li>
-          <li class="cred-point">
-            <div class="cred-dot"></div>
-            <div class="cred-point-text">
-              <strong>Pasé por lo mismo que tú</strong>
-              2 años de autosaboteo constante hasta entender qué estaba pasando dentro de mí. Eso es exactamente lo que enseño aquí.
-            </div>
-          </li>
-          <li class="cred-point">
-            <div class="cred-dot"></div>
-            <div class="cred-point-text">
-              <strong>Consistencia demostrada, no pantallas cherry-picked</strong>
-              Comparto semanas reales — con pérdidas, con errores y con el proceso detrás de cada decisión.
-            </div>
-          </li>
-          <li class="cred-point">
-            <div class="cred-dot"></div>
-            <div class="cred-point-text">
-              <strong>El seguimiento personal no es un adorno</strong>
-              Es la parte más valiosa del curso. Tus dudas concretas, respondidas directamente por mí durante 2 meses.
-            </div>
-          </li>
-        </ul>
+    <div class="section-eyebrow reveal">Perfil del alumno</div>
+    <h2 class="section-title reveal">Para quién es —<br>y para quién no</h2>
+    <div class="for-not-grid">
+      <div class="for-not-card reveal">
+        <div class="fn-icon yes">✓</div>
+        <div class="fn-text"><strong>Llevas entre 1 y 5 años operando sin consistencia</strong>Conoces la teoría. La ejecución falla de forma repetida y no entiendes por qué.</div>
       </div>
-      <div class="cred-visual">
-        <div class="cred-stat-grid">
-          <div class="cred-stat">
-            <div class="cred-stat-num">Fondeo</div>
-            <div class="cred-stat-label">Estrategia en cuentas de fondeo</div>
-          </div>
-          <div class="cred-stat">
-            <div class="cred-stat-num">Precio</div>
-            <div class="cred-stat-label">Metodología propia aplicada a diario</div>
-          </div>
-          <div class="cred-stat">
-            <div class="cred-stat-num">2m</div>
-            <div class="cred-stat-label">Seguimiento personal incluido</div>
-          </div>
-          <div class="cred-stat">
-            <div class="cred-stat-num">∞</div>
-            <div class="cred-stat-label">Acceso de por vida al contenido</div>
-          </div>
-        </div>
-        <div class="cred-note">El contenido del canal y la comunidad son la prueba. Mira el proceso antes de decidir.</div>
+      <div class="for-not-card reveal reveal-delay-1">
+        <div class="fn-icon no">✕</div>
+        <div class="fn-text"><strong>No es para ti si buscas señales</strong>Aquí no recibirás instrucciones de cuándo comprar ni cuándo vender. Eso no construye nada.</div>
+      </div>
+      <div class="for-not-card reveal">
+        <div class="fn-icon yes">✓</div>
+        <div class="fn-text"><strong>Sabes lo que tienes que hacer y aun así no lo ejecutas</strong>Si te identificas con esta frase, es exactamente la capa que trabajamos aquí.</div>
+      </div>
+      <div class="for-not-card reveal reveal-delay-1">
+        <div class="fn-icon no">✕</div>
+        <div class="fn-text"><strong>No es para ti si quieres una rentabilidad garantizada</strong>No existe. Cualquier programa que te lo prometa te está mintiendo.</div>
+      </div>
+      <div class="for-not-card reveal">
+        <div class="fn-icon yes">✓</div>
+        <div class="fn-text"><strong>Has comprado cursos técnicos y notas que no es eso lo que te falta</strong>Si ya lo sospechas, aquí encontrarás la confirmación y la solución.</div>
+      </div>
+      <div class="for-not-card reveal reveal-delay-1">
+        <div class="fn-icon no">✕</div>
+        <div class="fn-text"><strong>No es para ti si no tienes voluntad de aplicar un protocolo diario</strong>El método requiere implementación. Sin aplicación, el conocimiento no sirve de nada.</div>
       </div>
     </div>
   </div>
@@ -762,83 +750,86 @@ footer a:hover { color: var(--text-mid); }
 <!-- FAQ -->
 <section class="faq">
   <div class="container-sm">
-    <div class="section-eyebrow">Preguntas frecuentes</div>
-    <h2 class="section-title">Resuelve tus dudas</h2>
-    <div class="faq-list">
+    <div class="section-eyebrow reveal">Preguntas frecuentes</div>
+    <h2 class="section-title reveal">Resuelve tus dudas</h2>
+    <div class="faq-list reveal">
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Para quién es exactamente este curso?
+          ¿En qué se diferencia esto de los libros de psicología del trading?
           <span class="faq-arrow">+</span>
         </button>
-        <div class="faq-a">Para dos perfiles: el principiante que quiere construir una base sólida desde el principio sin pasar años probando cosas aleatorias, y el trader con experiencia que tiene rachas buenas pero no consigue ser consistente. Si te identificas con "sé lo que tengo que hacer pero no lo ejecuto" — esto es para ti.</div>
+        <div class="faq-a">Los libros describen el problema. El Neurotrading entrega un protocolo concreto para resolverlo. La diferencia es entre entender qué te pasa y tener algo que hacer cada mañana al respecto.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Ya he comprado otros cursos. ¿Cómo sé que esto es diferente?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">Porque trabajamos una capa anterior. Los otros cursos te enseñaron qué hacer en el gráfico. Aquí trabajamos por qué no eres capaz de hacerlo aunque lo sepas. Es la pieza que les falta a todos los demás.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
           ¿Necesito experiencia previa en trading?
           <span class="faq-arrow">+</span>
         </button>
-        <div class="faq-a">No. El curso incluye un módulo base de nivel 0 con todo lo necesario para empezar: qué es el trading, TradingView, MetaTrader y velas japonesas. Si ya tienes experiencia, puedes saltarte ese módulo e ir directamente al contenido más avanzado.</div>
+        <div class="faq-a">No es imprescindible. El programa incluye un Módulo 0 de fundamentos para quien viene desde cero. El resto del contenido es válido tanto para principiantes como para traders con años de experiencia.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
           ¿Qué incluye el seguimiento personal de 2 meses?
           <span class="faq-arrow">+</span>
         </button>
-        <div class="faq-a">Acceso directo a mí por privado durante 2 meses. No es un chat grupal — son tus dudas concretas respondidas directamente por mí. Una operación que no entiendes, un patrón de error que se repite, una situación específica de tu trading. Eso es lo que resolvemos.</div>
+        <div class="faq-a">Acceso directo por privado durante 2 meses. No es un chat grupal — son tus dudas concretas sobre tu operativa real, tus patrones de desregulación específicos y los ajustes a hacer. Es la parte más valiosa del programa.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Puedo usar mi propia estrategia?
+          ¿Puedo usar mi propia estrategia técnica?
           <span class="faq-arrow">+</span>
         </button>
-        <div class="faq-a">Sí. La estrategia ICT que incluyo es una base — si ya tienes la tuya, puedes usarla. El núcleo del curso es la psicología, el sistema y el proceso de ejecución. Eso funciona con cualquier estrategia.</div>
+        <div class="faq-a">Sí. El Neurotrading funciona con cualquier estrategia. La ejecución técnica incluida es una base — si ya tienes la tuya, el protocolo de regulación la potencia igual.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Hay garantía de resultados?
+          ¿Cuánto tarda en notarse el cambio?
           <span class="faq-arrow">+</span>
         </button>
-        <div class="faq-a">No. Nadie puede garantizar resultados en trading. Lo que sí te garantizo es que todo lo que hay en este curso es lo que me llevó a operar de forma consistente. Lo que hagas con ello depende de ti.</div>
+        <div class="faq-a">La regulación pre-sesión se nota en la primera semana. La modificación de patrones de desregulación lleva entre 6 y 12 semanas según el patrón y la implementación.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Cuánto tiempo tengo acceso al contenido?
+          ¿Hay garantía?
           <span class="faq-arrow">+</span>
         </button>
-        <div class="faq-a">De por vida. El curso, los recursos y todas las actualizaciones futuras. Sin suscripción adicional — pagas una vez y accedes siempre.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Hay devoluciones?
-          <span class="faq-arrow">+</span>
-        </button>
-        <div class="faq-a">No. El conocimiento, los recursos, el acceso a la comunidad y el seguimiento personal son entregados desde el primer día. Por eso no hay devoluciones. Antes de entrar, mira el contenido del canal — ahí puedes evaluar si esto es lo que buscas.</div>
+        <div class="faq-a">Sí. Si en 14 días sientes que el programa no es para ti, recuperas tu inversión. Sin preguntas.</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- CTA FINAL -->
-<section class="cta-final">
+<section class="cta-final" id="comprar">
   <div class="cta-final-glow"></div>
   <div class="container-sm" style="position:relative;z-index:1;">
-    <div class="section-eyebrow" style="justify-content:center;">Empieza hoy</div>
-    <h2 class="cta-final-title">De cero a <span class="gold">consistentemente</span> rentable</h2>
-    <p class="cta-final-sub">Un proceso claro que puedes ejecutar igual cada día, independientemente de cómo te sientas.</p>
-    <div class="cta-price-row">
+    <div class="section-eyebrow reveal" style="justify-content:center;">Empieza hoy</div>
+    <h2 class="cta-final-title reveal">¿Listo para entrenar<br>la capa que te falta?</h2>
+    <p class="cta-final-sub reveal">Un protocolo claro que puedes ejecutar cada mañana, independientemente de cómo te sientas.</p>
+    <div class="cta-price-block reveal">
       <div class="cta-price">297€</div>
+      <div class="cta-price-note">Pago único · Garantía 14 días · Acceso de por vida</div>
     </div>
-    <div class="cta-price-note">Pago único · Acceso de por vida · 2 meses de seguimiento personal</div>
-    <a class="btn-primary" href="https://www.skool.com/icp-trading-3989/about" style="font-size:16px;padding:18px 44px;">Acceder al Método Consistente →</a>
-    <div class="cta-final-fine">
-      Sin suscripción. Sin pagos recurrentes. Sin garantías de rentabilidad.<br>
+    <a class="btn-primary btn-primary-lg reveal" href="https://www.skool.com/icp-trading-3989/about">Entrar al Método Consistente →</a>
+    <div class="cta-final-fine reveal">
+      Pago único. Sin suscripción. Sin rentabilidad garantizada.<br>
       Si tienes dudas antes de entrar, escríbeme directamente.
+    </div>
+    <div class="cta-community reveal">
+      ¿Aún no estás listo? Empieza por la <a href="https://www.skool.com/icp-trading-3989/about">comunidad — 9€/mes</a> y conoce el método antes de comprar el programa completo.
     </div>
   </div>
 </section>
 
 <footer>
-  <div>© 2025 TraderBase · Método Consistente</div>
+  <div>© 2025 TraderBase · Neurotrading · Método Consistente</div>
   <div style="display:flex;gap:20px;">
     <a href="#">Política de privacidad</a>
     <a href="#">Aviso legal</a>
@@ -846,12 +837,20 @@ footer a:hover { color: var(--text-mid); }
 </footer>
 
 <script>
+// FAQ toggle
 function toggleFaq(btn) {
   const item = btn.parentElement;
   const isOpen = item.classList.contains('open');
   document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
   if (!isOpen) item.classList.add('open');
 }
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 
 </body>
