@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Consistencia — TraderBase</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#d4a73a;
+  --bg:#09090f;
+  --bg2:#0f0f18;
+  --bg3:#16161f;
+  --border:rgba(255,255,255,0.07);
+  --border-gold:rgba(212,167,58,0.35);
+  --text:#f0ece4;
+  --text-muted:#5e5e6e;
+  --text-mid:#9a9aaa;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:2.5rem 1rem 5rem;
+}
+.wrap{width:100%;max-width:540px}
+
+/* HEADER */
+.header{
+  text-align:center;
+  padding:2.5rem 2rem 2.25rem;
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:var(--bg2);
+  margin-bottom:1.25rem;
+  position:relative;
+  overflow:hidden;
+}
+.header::before{
+  content:'';
+  position:absolute;
+  top:-60px;left:50%;
+  transform:translateX(-50%);
+  width:300px;height:160px;
+  background:radial-gradient(ellipse,rgba(212,167,58,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:11px;
+  letter-spacing:4px;
+  color:var(--gold);
+  margin-bottom:1.25rem;
+  opacity:0.8;
+}
+.header h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:36px;
+  line-height:1.05;
+  color:var(--text);
+  margin-bottom:0.6rem;
+}
+.header p{
+  font-size:14px;
+  color:var(--text-mid);
+  line-height:1.5;
+}
+.header-meta{
+  display:flex;
+  justify-content:center;
+  gap:1.5rem;
+  margin-top:1.25rem;
+  padding-top:1.25rem;
+  border-top:1px solid var(--border);
+}
+.meta-item{
+  font-size:12px;
+  color:var(--text-muted);
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.meta-dot{
+  width:5px;height:5px;
+  border-radius:50%;
+  background:var(--gold);
+  opacity:0.6;
+}
+
+/* PROGRESS */
+.progress-wrap{margin-bottom:1.25rem}
+.progress-track{
+  display:flex;
+  gap:4px;
+  margin-bottom:0.5rem;
+}
+.p-seg{
+  height:2px;
+  flex:1;
+  background:var(--border);
+  border-radius:2px;
+  transition:background 0.4s;
+}
+.p-seg.done{background:var(--gold)}
+.progress-label{
+  font-size:11px;
+  color:var(--text-muted);
+  letter-spacing:0.5px;
+}
+
+/* QUESTION CARD */
+.q-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:1.75rem 1.5rem 1.5rem;
+  margin-bottom:1rem;
+  animation:fadeIn 0.25s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.q-num{
+  font-size:11px;
+  color:var(--gold);
+  letter-spacing:1.5px;
+  margin-bottom:0.6rem;
+  opacity:0.8;
+}
+.q-text{
+  font-size:17px;
+  font-weight:500;
+  color:var(--text);
+  line-height:1.45;
+  margin-bottom:1.4rem;
+}
+.options{display:flex;flex-direction:column;gap:8px}
+.opt{
+  display:flex;
+  align-items:flex-start;
+  gap:11px;
+  padding:13px 14px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  cursor:pointer;
+  transition:border-color 0.2s,background 0.2s;
+  background:transparent;
+  text-align:left;
+  width:100%;
+  font-family:'DM Sans',sans-serif;
+}
+.opt:hover{border-color:var(--border-gold);background:rgba(212,167,58,0.04)}
+.opt.selected{border-color:var(--gold);background:rgba(212,167,58,0.07)}
+.opt-letter{
+  width:22px;height:22px;
+  border-radius:5px;
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:500;
+  color:var(--text-muted);
+  flex-shrink:0;
+  margin-top:1px;
+  transition:background 0.2s,border-color 0.2s,color 0.2s;
+}
+.opt.selected .opt-letter{
+  background:var(--gold);
+  border-color:var(--gold);
+  color:var(--bg);
+}
+.opt-text{font-size:14px;color:var(--text);line-height:1.5}
+
+/* NAV */
+.nav{display:flex;justify-content:flex-end;margin-top:0.75rem}
+.btn-next{
+  background:var(--gold);
+  color:var(--bg);
+  border:none;
+  padding:11px 28px;
+  border-radius:8px;
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;
+  font-weight:500;
+  cursor:pointer;
+  transition:opacity 0.2s,transform 0.1s;
+  opacity:0.35;
+  pointer-events:none;
+}
+.btn-next.ready{opacity:1;pointer-events:all}
+.btn-next.ready:hover{opacity:0.88}
+.btn-next.ready:active{transform:scale(0.98)}
+
+/* RESULT */
+.result{display:none;animation:fadeIn 0.3s ease}
+.result.show{display:block}
+
+.result-header{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:2rem 1.75rem 1.75rem;
+  margin-bottom:1rem;
+  position:relative;
+  overflow:hidden;
+}
+.result-header::before{
+  content:'';
+  position:absolute;
+  top:-40px;right:-40px;
+  width:200px;height:200px;
+  background:radial-gradient(ellipse,rgba(212,167,58,0.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+.result-tag{
+  font-size:10px;
+  letter-spacing:3px;
+  color:var(--gold);
+  opacity:0.7;
+  margin-bottom:0.5rem;
+}
+.result-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:32px;
+  color:var(--text);
+  line-height:1.1;
+  margin-bottom:0.4rem;
+}
+.result-tagline{font-size:14px;color:var(--text-mid);margin-bottom:1.25rem}
+.score-bar{display:flex;gap:5px;margin-bottom:0.4rem}
+.s-seg{height:3px;flex:1;border-radius:2px;background:var(--border)}
+.s-seg.on{background:var(--gold)}
+.score-label{font-size:11px;color:var(--text-muted)}
+
+.r-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:1.25rem 1.5rem;
+  margin-bottom:0.875rem;
+}
+.r-card-label{
+  font-size:10px;
+  letter-spacing:2px;
+  color:var(--gold);
+  opacity:0.7;
+  margin-bottom:0.6rem;
+}
+.r-card p{font-size:14px;color:var(--text-mid);line-height:1.65}
+.r-list{list-style:none;padding:0}
+.r-list li{
+  font-size:14px;
+  color:var(--text-mid);
+  padding:7px 0;
+  border-bottom:1px solid var(--border);
+  line-height:1.5;
+  display:flex;
+  gap:8px;
+}
+.r-list li:last-child{border-bottom:none}
+.r-list li::before{content:'·';color:var(--gold);flex-shrink:0;font-weight:700}
+
+/* CTA */
+.cta-block{
+  background:var(--bg2);
+  border:1px solid var(--border-gold);
+  border-radius:14px;
+  padding:2rem 1.75rem;
+  text-align:center;
+  margin-bottom:1rem;
+  position:relative;
+  overflow:hidden;
+}
+.cta-block::before{
+  content:'';
+  position:absolute;
+  bottom:-50px;left:50%;
+  transform:translateX(-50%);
+  width:280px;height:120px;
+  background:radial-gradient(ellipse,rgba(212,167,58,0.07) 0%,transparent 70%);
+  pointer-events:none;
+}
+.cta-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:11px;
+  letter-spacing:4px;
+  color:var(--gold);
+  opacity:0.7;
+  margin-bottom:0.75rem;
+}
+.cta-block h2{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:26px;
+  color:var(--text);
+  margin-bottom:0.6rem;
+}
+.cta-block p{
+  font-size:14px;
+  color:var(--text-mid);
+  line-height:1.6;
+  margin-bottom:1.5rem;
+  max-width:380px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.cta-includes{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-bottom:1.5rem;
+  text-align:left;
+  max-width:340px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.cta-item{
+  font-size:13px;
+  color:var(--text-mid);
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+}
+.cta-item::before{content:'✓';color:var(--gold);flex-shrink:0;font-weight:500}
+.cta-price{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:40px;
+  color:var(--text);
+  margin-bottom:0.25rem;
+  line-height:1;
+}
+.cta-price-sub{font-size:12px;color:var(--text-muted);margin-bottom:1.25rem}
+.btn-cta{
+  display:inline-block;
+  background:var(--gold);
+  color:var(--bg);
+  padding:13px 36px;
+  border-radius:8px;
+  font-family:'DM Sans',sans-serif;
+  font-size:15px;
+  font-weight:500;
+  text-decoration:none;
+  transition:opacity 0.2s,transform 0.1s;
+  cursor:pointer;
+}
+.btn-cta:hover{opacity:0.88}
+.btn-cta:active{transform:scale(0.98)}
+.cta-note{
+  font-size:12px;
+  color:var(--text-muted);
+  margin-top:0.9rem;
+}
+
+.btn-restart{
+  display:block;
+  width:100%;
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text-muted);
+  padding:10px;
+  border-radius:8px;
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+  cursor:pointer;
+  transition:border-color 0.2s,color 0.2s;
+}
+.btn-restart:hover{border-color:rgba(255,255,255,0.15);color:var(--text-mid)}
+
+@media(max-width:480px){
+  body{padding:1.25rem 0.75rem 4rem}
+  .header h1{font-size:30px}
+  .result-name{font-size:27px}
+  .cta-price{font-size:34px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- QUIZ -->
+  <div id="quiz">
+    <div class="header">
+      <div class="logo">TRADERBASE</div>
+      <h1>Diagnóstico de consistencia</h1>
+      <p>Descubre exactamente por qué tu operativa no es consistente — y qué necesitas cambiar.</p>
+      <div class="header-meta">
+        <span class="meta-item"><span class="meta-dot"></span>9 preguntas</span>
+        <span class="meta-item"><span class="meta-dot"></span>3 minutos</span>
+        <span class="meta-item"><span class="meta-dot"></span>Resultado inmediato</span>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-track" id="progress-track"></div>
+      <div class="progress-label" id="progress-label">Pregunta 1 de 9</div>
+    </div>
+
+    <div id="q-card-wrap"></div>
+
+    <div class="nav">
+      <button class="btn-next" id="btn-next">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result" id="result"></div>
+
+</div>
+
+<script>
+const Qs = [
+  {
+    text: "¿Con qué frecuencia entras a una operación sin tener un plan claro antes de ejecutar?",
+    opts: [
+      "Casi nunca — siempre tengo el plan antes de entrar",
+      "A veces, si el mercado se mueve rápido y no quiero perderlo",
+      "Bastante seguido — confío en mi intuición del momento",
+      "Es lo habitual, decido en el momento sin plan previo"
+    ]
+  },
+  {
+    text: "Tienes una operación abierta que va en tu contra. ¿Qué haces?",
+    opts: [
+      "Respeto el stop exactamente donde lo puse antes de entrar",
+      "Muevo el stop un poco — solo para darle algo más de margen",
+      "Aguanto sin stop esperando que el precio gire",
+      "Promedio a la baja para bajar el punto de equilibrio"
+    ]
+  },
+  {
+    text: "Llevas dos o tres operaciones perdedoras seguidas. ¿Cómo afecta eso a tu siguiente entrada?",
+    opts: [
+      "No afecta — el sistema es el sistema, sigo el proceso",
+      "Me vuelvo más exigente con el setup, pero sigo operando",
+      "Quiero recuperar lo perdido y busco más setups activamente",
+      "Dejo de operar o entro a la primera excusa para 'recuperar'"
+    ]
+  },
+  {
+    text: "Acabas de cerrar una operación ganadora. ¿Qué pasa después?",
+    opts: [
+      "Sigo el plan del día exactamente igual que antes",
+      "Me relajo un poco y bajo la guardia",
+      "Busco otra entrada rápida para aprovechar el buen momento",
+      "Subo el riesgo porque 'hoy el mercado está de mi lado'"
+    ]
+  },
+  {
+    text: "¿Tienes un horario definido en el que operas cada día?",
+    opts: [
+      "Sí, tengo un horario concreto y lo respeto siempre",
+      "Tengo uno aproximado, pero lo adapto según el día",
+      "No realmente, opero cuando puedo o cuando veo algo",
+      "No hay patrón — depende completamente del día"
+    ]
+  },
+  {
+    text: "¿Revisas tus operaciones de forma sistemática — diario, semanal o mensual?",
+    opts: [
+      "Sí, tengo un proceso de revisión definido con métricas",
+      "Reviso de vez en cuando, pero sin estructura fija",
+      "Solo cuando algo va muy mal o tengo una racha mala",
+      "No hago revisiones — opero y sigo adelante"
+    ]
+  },
+  {
+    text: "¿Cuánto riesgo pones por operación?",
+    opts: [
+      "Siempre el mismo porcentaje fijo, sin excepción",
+      "Varía según lo convencido que esté del setup",
+      "Depende del día y cómo me encuentro ese momento",
+      "No lo calculo de forma precisa — uso lote fijo o lo que toca"
+    ]
+  },
+  {
+    text: "¿Tienes reglas escritas que definen cuándo entras y cuándo no entras al mercado?",
+    opts: [
+      "Sí, tengo reglas concretas escritas y las sigo",
+      "Tengo criterios mentales claros, pero no están escritos",
+      "Tengo algunas ideas generales, nada muy concreto",
+      "No tengo reglas definidas — lo decido en el momento"
+    ]
+  },
+  {
+    text: "Cuando cometes un error de ejecución — entrar mal, no respetar el stop, operar por impulso — ¿qué pasa?",
+    opts: [
+      "Lo registro, analizo la causa y paso página sin drama",
+      "Me molesta pero no hago gran cosa con ello",
+      "Me quedo dándole vueltas y afecta al resto del día",
+      "No llevo registro de errores de ejecución"
+    ]
+  }
+];
+
+const ARCHETYPES = [
+  {
+    range: [0, 9],
+    name: "El trader reactivo",
+    tagline: "Operas por impulso, no por proceso.",
+    level: 1,
+    causa: "Tu problema no es la estrategia — es que no tienes un sistema que seguir. Cada sesión es una toma de decisiones en tiempo real, sin un marco que te ancle. El resultado depende de cómo te levantas ese día, no de lo que hace el mercado.",
+    patrones: [
+      "Entras sin plan previo definido",
+      "El stop-loss es negociable según cómo va la operación",
+      "Las rachas malas disparan el modo 'recuperar'",
+      "No hay revisión sistemática — sin datos, sin aprendizaje",
+      "El riesgo por operación no es consistente"
+    ],
+    siguiente: "El primer paso no es aprender más estrategia. Es construir el proceso que te permite ejecutar lo que ya sabes, cada día, de la misma forma — independientemente de cómo te encuentres."
+  },
+  {
+    range: [10, 18],
+    name: "El trader intermitente",
+    tagline: "Sabes lo que tienes que hacer. Pero no siempre lo haces.",
+    level: 2,
+    causa: "Tienes criterios, pero no están formalizados. Funcionas bien cuando el mercado acompaña, pero cuando hay presión — rachas malas, días difíciles — el proceso se rompe. La inconsistencia no es de conocimiento, es de estructura.",
+    patrones: [
+      "El stop-loss se mueve bajo presión emocional",
+      "El riesgo varía según el conviction del momento",
+      "Las revisiones existen pero sin estructura ni periodicidad",
+      "El estado emocional filtra (o no filtra) las entradas",
+      "No hay respuesta definida para las rachas malas"
+    ],
+    siguiente: "Necesitas convertir lo que ya sabes en reglas no negociables. Un sistema escrito que funcione independientemente de cómo te encuentres ese día. El conocimiento ya lo tienes — falta el marco."
+  },
+  {
+    range: [19, 27],
+    name: "El trader con sistema incompleto",
+    tagline: "Tienes proceso. Pero tiene agujeros críticos.",
+    level: 3,
+    causa: "Has trabajado tu operativa y tienes estructura. Pero hay áreas donde el sistema falla — la revisión no es sistemática, el riesgo tiene excepciones, o la respuesta a las rachas malas no está definida. Esos huecos son los que generan inconsistencia.",
+    patrones: [
+      "Disciplina alta en condiciones normales",
+      "El proceso se deteriora en rachas o situaciones de presión",
+      "Áreas concretas sin protocolos definidos",
+      "El seguimiento no cierra el ciclo de mejora continua",
+      "Las excepciones al sistema son el problema"
+    ],
+    siguiente: "El trabajo ahora es auditar y cerrar los huecos del sistema. No empezar de cero — refinar lo que ya existe para que funcione el 100% de los días, no solo cuando todo va bien."
+  },
+  {
+    range: [28, 36],
+    name: "El trader con proceso",
+    tagline: "Tienes las bases. El siguiente nivel es optimizar.",
+    level: 4,
+    causa: "Operas con proceso. Las decisiones no dependen del estado emocional y tienes métricas que te dicen si el sistema funciona. Estás en la minoría del 5% de traders que llegan aquí — pero el trabajo no termina.",
+    patrones: [
+      "Ejecución disciplinada y sistemática",
+      "Gestión del riesgo fija e inamovible",
+      "Revisiones con datos, no con percepción subjetiva",
+      "Respuesta definida a rachas y errores de ejecución",
+      "El estado emocional no filtra las decisiones"
+    ],
+    siguiente: "El trabajo ahora es afinar el edge — revisar datos, ajustar parámetros, escalar con criterio. Y asegurarte de que la consistencia se mantiene cuando sube el tamaño y la presión."
+  }
+];
+
+let answers = new Array(Qs.length).fill(null);
+let current = 0;
+
+function buildProgress() {
+  const track = document.getElementById('progress-track');
+  track.innerHTML = Qs.map((_, i) => `<div class="p-seg" id="ps${i}"></div>`).join('');
+}
+
+function updateProgress() {
+  Qs.forEach((_, i) => {
+    const el = document.getElementById('ps' + i);
+    if (el) el.classList.toggle('done', i < current);
+  });
+  document.getElementById('progress-label').textContent = `Pregunta ${current + 1} de ${Qs.length}`;
+}
+
+function renderQ(idx) {
+  const q = Qs[idx];
+  const wrap = document.getElementById('q-card-wrap');
+  wrap.innerHTML = `
+    <div class="q-card">
+      <div class="q-num">PREGUNTA ${idx + 1} DE ${Qs.length}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="options">
+        ${q.opts.map((o, i) => `
+          <button class="opt${answers[idx] === i ? ' selected' : ''}" data-i="${i}">
+            <span class="opt-letter">${String.fromCharCode(65 + i)}</span>
+            <span class="opt-text">${o}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  wrap.querySelectorAll('.opt').forEach(el => {
+    el.addEventListener('click', () => {
+      answers[idx] = parseInt(el.dataset.i);
+      wrap.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      const btn = document.getElementById('btn-next');
+      btn.classList.add('ready');
+      btn.textContent = idx === Qs.length - 1 ? 'Ver mi diagnóstico →' : 'Siguiente →';
+    });
+  });
+  updateProgress();
+  const btn = document.getElementById('btn-next');
+  btn.classList.toggle('ready', answers[idx] !== null);
+  btn.textContent = idx === Qs.length - 1 ? 'Ver mi diagnóstico →' : 'Siguiente →';
+}
+
+function getScore() {
+  return answers.reduce((s, a) => s + (a !== null ? a : 0), 0);
+}
+
+function getArchetype(score) {
+  return ARCHETYPES.find(a => score >= a.range[0] && score <= a.range[1]) || ARCHETYPES[0];
+}
+
+function showResult() {
+  const score = getScore();
+  const arch = getArchetype(score);
+
+  document.getElementById('quiz').style.display = 'none';
+  const res = document.getElementById('result');
+  res.classList.add('show');
+
+  res.innerHTML = `
+    <div class="result-header">
+      <div class="result-tag">TU DIAGNÓSTICO</div>
+      <div class="result-name">${arch.name}</div>
+      <div class="result-tagline">${arch.tagline}</div>
+      <div class="score-bar">
+        ${[1,2,3,4].map(n => `<div class="s-seg${n <= arch.level ? ' on' : ''}"></div>`).join('')}
+      </div>
+      <div class="score-label">Nivel de consistencia: ${arch.level} / 4</div>
+    </div>
+
+    <div class="r-card">
+      <div class="r-card-label">POR QUÉ OCURRE</div>
+      <p>${arch.causa}</p>
+    </div>
+
+    <div class="r-card">
+      <div class="r-card-label">TUS PATRONES DE RIESGO</div>
+      <ul class="r-list">
+        ${arch.patrones.map(p => `<li>${p}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="r-card">
+      <div class="r-card-label">SIGUIENTE PASO</div>
+      <p>${arch.siguiente}</p>
+    </div>
+
+    <div class="cta-block">
+      <div class="cta-logo">TRADERBASE</div>
+      <h2>Método Consistente</h2>
+      <p>El curso que convierte tu operativa en un proceso repetible — con psicología, sistema y seguimiento personal.</p>
+      <div class="cta-includes">
+        <span class="cta-item">Formación completa en vídeo (acceso de por vida)</span>
+        <span class="cta-item">Comunidad con directos semanales</span>
+        <span class="cta-item">2 meses de seguimiento personalizado por privado</span>
+      </div>
+      <div class="cta-price">297€</div>
+      <div class="cta-price-sub">Pago único · Sin suscripciones</div>
+      <a class="btn-cta" href="https://edgartradea.github.io/traderbase-landing/" target="_blank" rel="noopener">
+        Quiero el Método Consistente →
+      </a>
+      <div class="cta-note">Sin promesas de rentabilidad garantizada. Sin señales. Solo proceso.</div>
+    </div>
+
+    <button class="btn-restart" onclick="restart()">Repetir el diagnóstico</button>
+  `;
+}
+
+function restart() {
+  answers = new Array(Qs.length).fill(null);
+  current = 0;
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('result').innerHTML = '';
+  document.getElementById('quiz').style.display = 'block';
+  renderQ(0);
+}
+
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (answers[current] === null) return;
+  if (current < Qs.length - 1) {
+    current++;
+    renderQ(current);
+  } else {
+    showResult();
+  }
+});
+
+buildProgress();
+renderQ(0);
+</script>
+</body>
+</html>
