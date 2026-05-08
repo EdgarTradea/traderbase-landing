@@ -116,6 +116,21 @@ section { padding: 100px 40px; max-width: 900px; margin: 0 auto; }
 
 .full-divider { height: 1px; background: var(--border); }
 
+.vsl-section { padding: 0 40px 80px; max-width: 900px; margin: 0 auto; }
+.vsl-wrap {
+  position: relative; border-radius: var(--radius-lg);
+  overflow: hidden; background: #000;
+  border: 1px solid var(--border);
+  box-shadow: 0 0 0 1px rgba(201,151,58,0.08), 0 32px 64px rgba(0,0,0,0.5);
+}
+.vsl-wrap video {
+  display: block; width: 100%; height: auto;
+  max-height: 540px; object-fit: contain;
+}
+@media (max-width: 680px) {
+  .vsl-section { padding: 0 20px 60px; }
+}
+
 .for-who-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px; }
 .for-who-card {
   padding: 32px; border: 1px solid var(--border);
@@ -260,6 +275,14 @@ footer {
   </div>
   <div class="hero-divider"></div>
 </section>
+
+<div class="vsl-section">
+  <div class="vsl-wrap">
+    <video controls preload="metadata">
+      <source src="./VSL.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
 
 <section id="problema">
   <div class="section-label">01 — El problema</div>
