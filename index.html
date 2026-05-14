@@ -235,6 +235,61 @@ footer {
 .footer-brand { font-size: 13px; color: var(--text-3); }
 .footer-note { font-size: 12px; color: var(--text-3); }
 
+.roadmap-section {
+  padding: 0 40px 80px; max-width: 900px; margin: 0 auto;
+}
+.roadmap-intro {
+  font-size: 14px; color: var(--text-3); margin-bottom: 40px;
+  font-family: 'Geist Mono', monospace;
+}
+.roadmap-track {
+  display: flex; align-items: flex-start; gap: 0;
+  overflow-x: auto; padding-bottom: 12px;
+  scrollbar-width: none;
+}
+.roadmap-track::-webkit-scrollbar { display: none; }
+.rnode {
+  display: flex; flex-direction: column; align-items: center;
+  flex-shrink: 0; width: 90px;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.35s ease var(--d), transform 0.35s ease var(--d);
+}
+.rnode-circle {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-3);
+  flex-shrink: 0;
+}
+.rnode-final .rnode-circle {
+  border-color: rgba(201,151,58,0.5);
+  background: rgba(201,151,58,0.08);
+  color: var(--gold); font-size: 14px;
+}
+.rnode-label {
+  margin-top: 10px; text-align: center; line-height: 1.4;
+}
+.rnode-label strong {
+  display: block; font-size: 11px; font-weight: 500; color: var(--text-2);
+  margin-bottom: 2px;
+}
+.rnode-label span {
+  font-size: 10px; color: var(--text-3); font-weight: 300;
+}
+.rconnector {
+  flex: 1; min-width: 16px; height: 1px; background: var(--border);
+  position: relative; overflow: hidden; margin-top: 19px; flex-shrink: 0;
+}
+.rconnector::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(201,151,58,0.6), rgba(201,151,58,0.15));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.5s ease var(--d);
+}
+.roadmap-track.animate .rnode { opacity: 1; transform: translateY(0); }
+.roadmap-track.animate .rconnector::after { transform: scaleX(1); }
+
 @media (max-width: 680px) {
   nav { padding: 0 20px; }
   section { padding: 80px 20px; }
@@ -244,6 +299,8 @@ footer {
   .module-row { grid-template-columns: 40px 1fr; }
   .module-tag { display: none; }
   footer { flex-direction: column; gap: 10px; text-align: center; }
+  .roadmap-section { padding: 0 20px 60px; }
+  .rnode { width: 72px; }
 }
 </style>
 </head>
@@ -281,6 +338,42 @@ footer {
     <video controls preload="metadata">
       <source src="./VSL.mp4" type="video/mp4">
     </video>
+  </div>
+</div>
+
+<div class="roadmap-section">
+  <div class="section-label" style="margin-bottom:20px;">El camino</div>
+  <p class="roadmap-intro">6 fases · un orden deliberado · cada una construye sobre la anterior</p>
+  <div class="roadmap-track">
+    <div class="rnode" style="--d:0.05s">
+      <div class="rnode-circle">S0</div>
+      <div class="rnode-label"><strong>Intro</strong><span>Qué vas a construir</span></div>
+    </div>
+    <div class="rconnector" style="--d:0.2s"></div>
+    <div class="rnode" style="--d:0.25s">
+      <div class="rnode-circle">S1</div>
+      <div class="rnode-label"><strong>Mercado</strong><span>Cómo mueve el precio</span></div>
+    </div>
+    <div class="rconnector" style="--d:0.4s"></div>
+    <div class="rnode" style="--d:0.45s">
+      <div class="rnode-circle">S2</div>
+      <div class="rnode-label"><strong>Psicología</strong><span>Antes del dinero real</span></div>
+    </div>
+    <div class="rconnector" style="--d:0.6s"></div>
+    <div class="rnode" style="--d:0.65s">
+      <div class="rnode-circle">S3</div>
+      <div class="rnode-label"><strong>Estrategia</strong><span>Tu sistema técnico</span></div>
+    </div>
+    <div class="rconnector" style="--d:0.8s"></div>
+    <div class="rnode" style="--d:0.85s">
+      <div class="rnode-circle">S4</div>
+      <div class="rnode-label"><strong>El Camino</strong><span>Backtest → Escalar</span></div>
+    </div>
+    <div class="rconnector" style="--d:1.0s"></div>
+    <div class="rnode rnode-final" style="--d:1.05s">
+      <div class="rnode-circle">★</div>
+      <div class="rnode-label"><strong>Trader</strong><span>Profesional</span></div>
+    </div>
   </div>
 </div>
 
@@ -402,9 +495,11 @@ footer {
       <div class="price-amount"><sup>€</sup>350</div>
       <div class="price-period">pago único · acceso de por vida</div>
       <ul class="price-features">
+        <li>Acceso inmediato tras el pago</li>
         <li>Curso completo en vídeo — las 5 secciones en orden</li>
-        <li>Comunidad Skool incluida</li>
-        <li>Directos semanales con replay</li>
+        <li>Comunidad privada en Skool</li>
+        <li>Revisiones de trades en grupo cada semana</li>
+        <li>Llamada grupal semanal en directo</li>
         <li class="highlight">2 meses de seguimiento personalizado por privado</li>
         <li>Acceso a futuras actualizaciones</li>
       </ul>
@@ -444,5 +539,14 @@ footer {
   <div class="footer-note">Sin promesas de rentabilidad. Sin hype.</div>
 </footer>
 
+<script>
+const track = document.querySelector('.roadmap-track');
+if (track) {
+  const obs = new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) { track.classList.add('animate'); obs.disconnect(); }
+  }, { threshold: 0.25 });
+  obs.observe(track);
+}
+</script>
 </body>
 </html>
