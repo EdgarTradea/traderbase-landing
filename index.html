@@ -290,6 +290,31 @@ footer {
 .roadmap-track.animate .rnode { opacity: 1; transform: translateY(0); }
 .roadmap-track.animate .rconnector::after { transform: scaleX(1); }
 
+.phase-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  overflow: hidden; margin-bottom: 32px;
+}
+.phase-card {
+  background: var(--bg); padding: 28px 22px;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.35s ease var(--d), transform 0.35s ease var(--d), background 0.12s;
+}
+.phase-grid.animate .phase-card { opacity: 1; transform: translateY(0); }
+.phase-card:hover { background: var(--surface); }
+.phase-num-bg {
+  font-family: 'Geist Mono', monospace;
+  font-size: 36px; font-weight: 300; letter-spacing: -0.04em;
+  color: rgba(255,255,255,0.07); line-height: 1; margin-bottom: 16px;
+}
+.phase-card-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+.phase-card-desc { font-size: 12px; font-weight: 300; color: var(--text-2); line-height: 1.55; }
+.phase-card.phase-final { background: rgba(201,151,58,0.03); }
+.phase-card.phase-final:hover { background: rgba(201,151,58,0.07); }
+.phase-card.phase-final .phase-num-bg { color: rgba(201,151,58,0.22); }
+.phase-card.phase-final .phase-card-title { color: var(--gold); }
+
 @media (max-width: 680px) {
   nav { padding: 0 20px; }
   section { padding: 80px 20px; }
@@ -301,6 +326,7 @@ footer {
   footer { flex-direction: column; gap: 10px; text-align: center; }
   .roadmap-section { padding: 0 20px 60px; }
   .rnode { width: 72px; }
+  .phase-grid { grid-template-columns: repeat(2, 1fr); }
 }
 </style>
 </head>
@@ -417,8 +443,40 @@ footer {
 
 <section id="que-incluye">
   <div class="section-label">03 — Qué incluye</div>
-  <h2 class="includes-heading">El camino completo.<br><em>En orden.</em></h2>
-  <p class="includes-sub">Cinco secciones con una lógica clara: primero entiendes el mercado, luego operas con un sistema, luego sabes qué hacer con los resultados.</p>
+  <div class="phase-grid" id="phase-grid">
+    <div class="phase-card" style="--d:0.05s">
+      <div class="phase-num-bg">00</div>
+      <div class="phase-card-title">Introducción</div>
+      <div class="phase-card-desc">Qué vas a construir y por qué el orden no es opcional.</div>
+    </div>
+    <div class="phase-card" style="--d:0.15s">
+      <div class="phase-num-bg">01</div>
+      <div class="phase-card-title">Mercado</div>
+      <div class="phase-card-desc">Estructura, liquidez y desequilibrio. La base sin dinero encima.</div>
+    </div>
+    <div class="phase-card" style="--d:0.25s">
+      <div class="phase-num-bg">02</div>
+      <div class="phase-card-title">Psicología</div>
+      <div class="phase-card-desc">Cómo funciona tu cabeza bajo presión. Entra justo antes del dinero real.</div>
+    </div>
+    <div class="phase-card" style="--d:0.35s">
+      <div class="phase-num-bg">03</div>
+      <div class="phase-card-title">Estrategia</div>
+      <div class="phase-card-desc">El sistema técnico completo. Modelos de entrada y gestión real.</div>
+    </div>
+    <div class="phase-card" style="--d:0.45s">
+      <div class="phase-num-bg">04</div>
+      <div class="phase-card-title">El Camino</div>
+      <div class="phase-card-desc">Backtesting → primera cuenta → gestión → escalar paso a paso.</div>
+    </div>
+    <div class="phase-card phase-final" style="--d:0.55s">
+      <div class="phase-num-bg">★</div>
+      <div class="phase-card-title">Trader Profesional</div>
+      <div class="phase-card-desc">El resultado al final del proceso. No al final del mes.</div>
+    </div>
+  </div>
+
+  <p class="includes-sub">Detalle por sección</p>
 
   <div class="modules">
     <div class="module-row">
@@ -546,6 +604,13 @@ if (track) {
     if (e.isIntersecting) { track.classList.add('animate'); obs.disconnect(); }
   }, { threshold: 0.25 });
   obs.observe(track);
+}
+const phaseGrid = document.querySelector('.phase-grid');
+if (phaseGrid) {
+  const obs2 = new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) { phaseGrid.classList.add('animate'); obs2.disconnect(); }
+  }, { threshold: 0.15 });
+  obs2.observe(phaseGrid);
 }
 </script>
 </body>
