@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Secuencia de 4 Etapas — TraderBase</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060a;
+  --surface: #0e0e16;
+  --surface2: #14141e;
+  --border: rgba(255,255,255,0.06);
+  --border-active: rgba(212,167,58,0.35);
+  --accent: #d4a73a;
+  --accent-dim: rgba(212,167,58,0.07);
+  --accent-mid: rgba(212,167,58,0.18);
+  --accent-glow: rgba(212,167,58,0.15);
+  --green: #2ecc8a;
+  --green-dim: rgba(46,204,138,0.07);
+  --green-mid: rgba(46,204,138,0.18);
+  --red: #e84040;
+  --red-dim: rgba(232,64,64,0.07);
+  --red-mid: rgba(232,64,64,0.18);
+  --blue: #60a5fa;
+  --blue-dim: rgba(96,165,250,0.07);
+  --blue-mid: rgba(96,165,250,0.18);
+  --purple: #a78bfa;
+  --purple-dim: rgba(167,139,250,0.07);
+  --purple-mid: rgba(167,139,250,0.18);
+  --amber: #f5a623;
+  --amber-dim: rgba(245,166,35,0.07);
+  --amber-mid: rgba(245,166,35,0.18);
+  --text: #ede8df;
+  --text-mid: #8a8278;
+  --text-dim: #4a4540;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: 80px;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── HEADER ─── */
+.header {
+  padding: 52px 40px 40px;
+  max-width: 780px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.header-tag {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-tag::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+
+.header-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(42px, 7vw, 64px);
+  letter-spacing: 0.03em;
+  line-height: 0.93;
+  margin-bottom: 20px;
+}
+.header-title .accent { color: var(--accent); }
+
+.header-desc {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.7;
+  max-width: 520px;
+  border-left: 2px solid var(--accent);
+  padding-left: 16px;
+  font-style: italic;
+}
+
+/* ─── INTRO VISUAL ─── */
+.chain-wrap {
+  max-width: 780px;
+  margin: 0 auto 48px;
+  padding: 0 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.chain {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  align-items: center;
+  gap: 0;
+}
+
+.chain-step {
+  padding: 18px 14px 16px;
+  border-radius: 10px;
+  text-align: center;
+  position: relative;
+}
+
+.chain-step.t { background: var(--red-dim); border: 1px solid var(--red-mid); }
+.chain-step.f { background: var(--amber-dim); border: 1px solid var(--amber-mid); }
+.chain-step.m { background: var(--blue-dim); border: 1px solid var(--blue-mid); }
+.chain-step.a { background: var(--red-dim); border: 1px solid var(--red-mid); }
+
+.chain-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  margin-bottom: 6px;
+}
+.chain-step.t .chain-num { color: var(--red); }
+.chain-step.f .chain-num { color: var(--amber); }
+.chain-step.m .chain-num { color: var(--blue); }
+.chain-step.a .chain-num { color: var(--red); }
+
+.chain-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.05em;
+}
+.chain-step.t .chain-name { color: var(--red); }
+.chain-step.f .chain-name { color: var(--amber); }
+.chain-step.m .chain-name { color: var(--blue); }
+.chain-step.a .chain-name { color: var(--red); }
+
+.chain-sub { font-size: 11px; color: var(--text-mid); margin-top: 4px; line-height: 1.4; }
+
+.chain-arrow {
+  padding: 0 6px;
+  color: var(--text-dim);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chain-cut-wrap {
+  max-width: 780px;
+  margin: -12px auto 48px;
+  padding: 0 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.chain-cut-label {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 10px;
+}
+
+.chain-cut {
+  background: var(--green-dim);
+  border: 1px dashed var(--green-mid);
+  border-radius: 8px;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-mid);
+  font-style: italic;
+}
+
+/* ─── CONTENT ─── */
+.content-wrap {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 40px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+/* ─── CARD ─── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.card.done { border-color: var(--green-mid); }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  cursor: pointer;
+  user-select: none;
+}
+.card-header:hover { background: rgba(255,255,255,0.015); }
+
+.card-badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.card-badge.t { background: var(--red-dim); color: var(--red); border: 1px solid var(--red-mid); }
+.card-badge.f { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-mid); }
+.card-badge.m { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue-mid); }
+.card-badge.a { background: var(--red-dim); color: var(--red); border: 1px solid var(--red-mid); }
+.card-badge.cut { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-mid); }
+
+.card-title-wrap { flex: 1; }
+.card-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+}
+.card-subtitle { font-size: 12px; color: var(--text-mid); margin-top: 2px; }
+
+.card-chevron {
+  color: var(--text-dim);
+  font-size: 12px;
+  transition: transform 0.25s;
+}
+.card.open .card-chevron { transform: rotate(180deg); }
+
+.card-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.25s;
+}
+.card.open .card-body { max-height: 1200px; padding-bottom: 4px; }
+
+.card-inner { padding: 0 22px 22px; }
+
+.card-explain {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.75;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  background: var(--surface2);
+  border-radius: 8px;
+  border-left: 2px solid var(--border);
+}
+.card-explain.t { border-left-color: var(--red); }
+.card-explain.f { border-left-color: var(--amber); }
+.card-explain.m { border-left-color: var(--blue); }
+.card-explain.a { border-left-color: var(--red); }
+.card-explain.cut { border-left-color: var(--green); }
+
+.q-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  margin-top: 16px;
+}
+.q-label:first-of-type { margin-top: 0; }
+
+textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+  resize: vertical;
+  min-height: 80px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+textarea:focus { border-color: var(--accent-mid); }
+textarea::placeholder { color: var(--text-dim); font-style: italic; }
+
+/* Opciones */
+.options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.option {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  cursor: pointer;
+  padding: 9px 12px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  transition: all 0.15s;
+  font-size: 13px;
+  color: var(--text-mid);
+  user-select: none;
+}
+.option:hover { border-color: rgba(255,255,255,0.12); color: var(--text); }
+.option.sel {
+  border-color: var(--accent-mid);
+  background: var(--accent-dim);
+  color: var(--text);
+}
+
+.opt-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 3px;
+  transition: all 0.15s;
+}
+.option.sel .opt-dot { background: var(--accent); border-color: var(--accent); }
+
+/* Hint */
+.q-hint { font-size: 11px; color: var(--text-dim); font-style: italic; margin-top: 4px; }
+
+/* Separador */
+.sep { height: 1px; background: var(--border); margin: 18px 0; }
+
+/* ─── RESUMEN ─── */
+.resumen-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border-active);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.resumen-header {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.resumen-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.resumen-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+.resumen-body { padding: 20px 22px; display: none; }
+.resumen-body.visible { display: block; }
+
+.resumen-row {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+.resumen-row:last-child { border-bottom: none; }
+
+.resumen-key {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding-top: 1px;
+}
+.resumen-key.t { color: var(--red); }
+.resumen-key.f { color: var(--amber); }
+.resumen-key.m { color: var(--blue); }
+.resumen-key.a { color: var(--red); }
+.resumen-key.cut { color: var(--green); }
+
+.resumen-val {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.6;
+}
+.resumen-val em { color: var(--text-dim); font-style: italic; }
+
+.resumen-btn {
+  display: block;
+  width: 100%;
+  padding: 11px;
+  background: var(--accent-dim);
+  border: 1px dashed var(--border-active);
+  border-radius: 7px;
+  color: var(--accent);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 14px;
+}
+.resumen-btn:hover { background: var(--accent-mid); }
+
+/* ─── SAVE BAR ─── */
+.save-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(6,6,10,0.97);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+}
+.save-info { font-size: 11px; color: var(--text-dim); }
+.save-info strong { color: var(--text-mid); }
+.save-actions { display: flex; gap: 8px; }
+
+.save-btn {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+}
+.save-btn.primary { background: var(--accent); color: #06060a; }
+.save-btn.primary:hover { opacity: 0.88; }
+.save-btn.secondary { background: var(--surface2); color: var(--text-mid); border: 1px solid var(--border); }
+.save-btn.secondary:hover { border-color: rgba(255,255,255,0.12); }
+.save-btn.saved { background: var(--green) !important; color: #06060a !important; }
+
+/* ─── PROGRESS ─── */
+.progress-wrap {
+  max-width: 780px;
+  margin: 0 auto 32px;
+  padding: 0 40px;
+  position: relative;
+  z-index: 1;
+}
+.progress-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.progress-label span:last-child { color: var(--accent); }
+.progress-track {
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #f5c842);
+  border-radius: 2px;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  width: 0%;
+}
+
+/* ─── PRINT ─── */
+@media print {
+  .save-bar, .card-chevron { display: none !important; }
+  body { background: white; color: black; padding-bottom: 0; }
+  body::before { display: none; }
+  .header { padding-top: 24px !important; }
+  .header-title { color: black; font-size: 42px; }
+  .header-title .accent { color: #b8860b; }
+  .header-desc { color: #555; border-left-color: #b8860b; }
+  .header-tag { color: #b8860b; }
+  .header-tag::before { background: #b8860b; }
+  .card { background: white; border: 1px solid #ddd; break-inside: avoid; margin-bottom: 12px; }
+  .card-body { max-height: none !important; padding-bottom: 4px !important; }
+  .card-inner { padding-bottom: 16px; }
+  .card-header { background: #f9f9f9; }
+  .card-title { color: black; }
+  .card-subtitle { color: #555; }
+  .card-explain { background: #f5f5f5; color: #444; border-color: #ccc; }
+  .card-badge { background: #f0f0f0 !important; color: #333 !important; border-color: #ddd !important; }
+  textarea { background: #f9f9f9; color: black; border-color: #ddd; min-height: 60px; }
+  .option { background: #f9f9f9; color: #444; border-color: #ddd; }
+  .option.sel { background: #fff9e6; border-color: #b8860b; color: #333; }
+  .opt-dot { border-color: #ccc; }
+  .option.sel .opt-dot { background: #b8860b; border-color: #b8860b; }
+  .chain-wrap { padding: 0 40px; }
+  .chain-step { border: 1px solid #ddd !important; background: #f9f9f9 !important; }
+  .chain-name, .chain-num { color: #333 !important; }
+  .chain-sub { color: #666; }
+  .chain-cut { background: #f9faf9; border-color: #aaa; color: #444; }
+  .chain-cut-label { color: #2a8a5a; }
+  .resumen-wrap { background: #f9f9f9; border-color: #b8860b; break-inside: avoid; }
+  .resumen-title { color: #b8860b; }
+  .resumen-dot { background: #b8860b; }
+  .resumen-body { display: block !important; }
+  .resumen-btn { display: none; }
+  .resumen-key { color: #999 !important; }
+  .resumen-key.t { color: #c0392b !important; }
+  .resumen-key.f { color: #c07a00 !important; }
+  .resumen-key.m { color: #2563aa !important; }
+  .resumen-key.cut { color: #2a8a5a !important; }
+  .progress-wrap { display: none; }
+  .q-label { color: #888; }
+  .sep { background: #eee; }
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 600px) {
+  .header, .content-wrap, .progress-wrap, .chain-wrap, .chain-cut-wrap { padding-left: 18px; padding-right: 18px; }
+  .save-bar { padding: 10px 18px; }
+  .chain { grid-template-columns: 1fr auto 1fr; gap: 0; }
+  .chain-step.m, .chain-step.a, .chain-arrow:nth-child(4), .chain-arrow:nth-child(6) {
+    display: none;
+  }
+  .chain { grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; font-size: 11px; }
+  .chain-name { font-size: 14px; }
+  .chain-sub { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-tag">Módulo 1 · Psicología · Recurso</div>
+  <h1 class="header-title">La Secuencia<br>de <span class="accent">4 Etapas</span></h1>
+  <p class="header-desc">Antes de cometer el error siempre pasan tres cosas. Aquí aprendes a identificarlas y a poner un interruptor antes de que la secuencia te lleve al mismo sitio de siempre.</p>
+</div>
+
+<!-- VISUAL CADENA -->
+<div class="chain-wrap">
+  <div class="chain">
+    <div class="chain-step t">
+      <div class="chain-num">01</div>
+      <div class="chain-name">Trigger</div>
+      <div class="chain-sub">El disparador</div>
+    </div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-step f">
+      <div class="chain-num">02</div>
+      <div class="chain-name">Físico</div>
+      <div class="chain-sub">En tu cuerpo</div>
+    </div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-step m">
+      <div class="chain-num">03</div>
+      <div class="chain-name">Mental</div>
+      <div class="chain-sub">Lo que piensas</div>
+    </div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-step a">
+      <div class="chain-num">04</div>
+      <div class="chain-name">Error</div>
+      <div class="chain-sub">La acción</div>
+    </div>
+  </div>
+</div>
+
+<div class="chain-cut-wrap">
+  <div class="chain-cut-label">El objetivo → poner el interruptor aquí</div>
+  <div class="chain-cut">Entre la etapa 3 (mental) y la acción — o antes — hay una ventana. Este recurso te ayuda a encontrarla.</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span>Progreso</span>
+    <span id="progressText">0 de 5 secciones completadas</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<!-- CONTENIDO -->
+<div class="content-wrap">
+
+  <!-- ETAPA 1: TRIGGER -->
+  <div>
+    <div class="section-label">Etapa 1 de 4</div>
+    <div class="card" id="card-trigger">
+      <div class="card-header" onclick="toggleCard('card-trigger')">
+        <div class="card-badge t">01</div>
+        <div class="card-title-wrap">
+          <div class="card-title">El Trigger — El disparador</div>
+          <div class="card-subtitle">Lo que inicia la secuencia</div>
+        </div>
+        <div class="card-chevron">▼</div>
+      </div>
+      <div class="card-body">
+        <div class="card-inner">
+          <div class="card-explain t">El error nunca aparece de la nada. Siempre hay algo que lo dispara. Puede ser externo (fuera de los gráficos) o interno (dentro de la sesión). La mayoría de traders solo ven el error — nunca buscan el disparador.</div>
+
+          <div class="q-label">Triggers externos (fuera de los gráficos)</div>
+          <div class="options-grid" id="triggers-ext">
+            <div class="option" onclick="toggleOpt(this,'triggers-ext')"><div class="opt-dot"></div>Discusión con alguien antes de operar</div>
+            <div class="option" onclick="toggleOpt(this,'triggers-ext')"><div class="opt-dot"></div>Mala noche o poco sueño</div>
+            <div class="option" onclick="toggleOpt(this,'triggers-ext')"><div class="opt-dot"></div>Estrés económico o personal</div>
+            <div class="option" onclick="toggleOpt(this,'triggers-ext')"><div class="opt-dot"></div>Cambio de horario o rutina rota</div>
+            <div class="option" onclick="toggleOpt(this,'triggers-ext')"><div class="opt-dot"></div>Noticia inesperada, imprevisto del día</div>
+            <div class="option" onclick="toggleOpt(this,'triggers-ext')"><div class="opt-dot"></div>Otro (escríbelo abajo)</div>
+          </div>
+
+          <div class="q-label" style="margin-top:14px">Triggers internos (dentro de la sesión)</div>
+          <div class="options-grid" id="triggers-int">
+            <div class="option" onclick="toggleOpt(this,'triggers-int')"><div class="opt-dot"></div>Racha de 2–3 pérdidas seguidas</div>
+            <div class="option" onclick="toggleOpt(this,'triggers-int')"><div class="opt-dot"></div>Trade que estaba en profit y volvió a break-even</div>
+            <div class="option" onclick="toggleOpt(this,'triggers-int')"><div class="opt-dot"></div>A punto de pasar o perder una prueba de fondeo</div>
+            <div class="option" onclick="toggleOpt(this,'triggers-int')"><div class="opt-dot"></div>Ver una entrada potencial que se está moviendo</div>
+            <div class="option" onclick="toggleOpt(this,'triggers-int')"><div class="opt-dot"></div>Stop loss a punto de ser tocado</div>
+            <div class="option" onclick="toggleOpt(this,'triggers-int')"><div class="opt-dot"></div>Otro (escríbelo abajo)</div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="q-label">¿Cuál es tu trigger más habitual? Descríbelo con el mayor detalle posible</div>
+          <textarea id="ta-trigger" placeholder="Ejemplo: cuando llevo dos pérdidas seguidas en el mismo día y todavía tengo margen de riesgo disponible..." rows="3"></textarea>
+          <div class="q-hint">Cuanto más específico, más útil. No escribas el error — escribe lo que pasa justo antes.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETAPA 2: FÍSICO -->
+  <div>
+    <div class="section-label">Etapa 2 de 4</div>
+    <div class="card" id="card-fisico">
+      <div class="card-header" onclick="toggleCard('card-fisico')">
+        <div class="card-badge f">02</div>
+        <div class="card-title-wrap">
+          <div class="card-title">Lo Físico — La señal en tu cuerpo</div>
+          <div class="card-subtitle">Antes de que llegue a tu cabeza, ya está en tu cuerpo</div>
+        </div>
+        <div class="card-chevron">▼</div>
+      </div>
+      <div class="card-body">
+        <div class="card-inner">
+          <div class="card-explain f">El sistema nervioso reacciona en milisegundos. La señal física llega antes de que puedas pensar nada. Aprende a reconocerla y tienes una ventana de intervención antes de que la racionalización te lleve al error.</div>
+
+          <div class="q-label">¿Qué sensaciones reconoces en tu cuerpo justo antes de cometer el error?</div>
+          <div class="options-grid" id="fisico-opts">
+            <div class="option" onclick="toggleOpt(this,'fisico-opts')"><div class="opt-dot"></div>Tensión en el pecho o en la mandíbula</div>
+            <div class="option" onclick="toggleOpt(this,'fisico-opts')"><div class="opt-dot"></div>Inquietud, necesidad de hacer algo</div>
+            <div class="option" onclick="toggleOpt(this,'fisico-opts')"><div class="opt-dot"></div>Respiración más rápida o contenida</div>
+            <div class="option" onclick="toggleOpt(this,'fisico-opts')"><div class="opt-dot"></div>Piernas o manos inquietas</div>
+            <div class="option" onclick="toggleOpt(this,'fisico-opts')"><div class="opt-dot"></div>Calor o rubor repentino</div>
+            <div class="option" onclick="toggleOpt(this,'fisico-opts')"><div class="opt-dot"></div>Sensación de urgencia o aceleración</div>
+            <div class="option" onclick="toggleOpt(this,'fisico-opts')"><div class="opt-dot"></div>No soy consciente de ninguna señal</div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="q-label">Describe con tus palabras lo que sientes físicamente en esos momentos</div>
+          <textarea id="ta-fisico" placeholder="Ejemplo: me pongo tenso, empiezo a mover la pierna y siento que no puedo estar quieto mirando el gráfico sin hacer nada..." rows="3"></textarea>
+          <div class="q-hint">Si dices que no sientes nada, es que todavía no lo has observado. La señal siempre está — solo hay que aprender a escucharla.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETAPA 3: MENTAL -->
+  <div>
+    <div class="section-label">Etapa 3 de 4</div>
+    <div class="card" id="card-mental">
+      <div class="card-header" onclick="toggleCard('card-mental')">
+        <div class="card-badge m">03</div>
+        <div class="card-title-wrap">
+          <div class="card-title">Lo Mental — La racionalización</div>
+          <div class="card-subtitle">Cuando tu cabeza te convence de que tiene sentido</div>
+        </div>
+        <div class="card-chevron">▼</div>
+      </div>
+      <div class="card-body">
+        <div class="card-inner">
+          <div class="card-explain m">Esta es la etapa más peligrosa. Tu cerebro, bajo estrés, genera argumentos que parecen lógicos pero que solo buscan una cosa: aliviar la incomodidad. No está procesando la realidad del mercado — está buscando una salida.</div>
+
+          <div class="q-label">¿Qué pensamientos aparecen justo antes de cometer el error?</div>
+          <div class="options-grid" id="mental-opts">
+            <div class="option" onclick="toggleOpt(this,'mental-opts')"><div class="opt-dot"></div>"Esta vez es diferente, el contexto lo justifica"</div>
+            <div class="option" onclick="toggleOpt(this,'mental-opts')"><div class="opt-dot"></div>"Si no entro ahora, me lo pierdo"</div>
+            <div class="option" onclick="toggleOpt(this,'mental-opts')"><div class="opt-dot"></div>"Tengo que recuperar lo que he perdido hoy"</div>
+            <div class="option" onclick="toggleOpt(this,'mental-opts')"><div class="opt-dot"></div>"Solo un poco más de margen al stop y lo salvo"</div>
+            <div class="option" onclick="toggleOpt(this,'mental-opts')"><div class="opt-dot"></div>"Con esta operación compenso las pérdidas"</div>
+            <div class="option" onclick="toggleOpt(this,'mental-opts')"><div class="opt-dot"></div>"Tengo suficiente experiencia para saltarme esta regla"</div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="q-label">¿Qué te dices a ti mismo para justificar el error antes de cometerlo?</div>
+          <textarea id="ta-mental" placeholder="Ejemplo: me convenzo de que el setup 'casi' cumple mis criterios y que si no entro me voy a arrepentir cuando el precio se mueva..." rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETAPA 4: ERROR -->
+  <div>
+    <div class="section-label">Etapa 4 de 4</div>
+    <div class="card" id="card-error">
+      <div class="card-header" onclick="toggleCard('card-error')">
+        <div class="card-badge a">04</div>
+        <div class="card-title-wrap">
+          <div class="card-title">El Error — La acción</div>
+          <div class="card-subtitle">Lo único que siempre habías visto</div>
+        </div>
+        <div class="card-chevron">▼</div>
+      </div>
+      <div class="card-body">
+        <div class="card-inner">
+          <div class="card-explain a">El error es el último eslabón — no el primero. Siempre te has centrado en no cometerlo, en tener más disciplina, en ser más fuerte. Pero el error es solo el resultado de lo que ha pasado en las tres etapas anteriores.</div>
+
+          <div class="q-label">¿Cuál es tu error de ejecución más habitual?</div>
+          <div class="options-grid" id="error-opts">
+            <div class="option" onclick="toggleOpt(this,'error-opts')"><div class="opt-dot"></div>Mover el stop loss para dar más margen</div>
+            <div class="option" onclick="toggleOpt(this,'error-opts')"><div class="opt-dot"></div>Cerrar el trade antes de que llegue al target</div>
+            <div class="option" onclick="toggleOpt(this,'error-opts')"><div class="opt-dot"></div>Entrar a una operación que no cumple los criterios</div>
+            <div class="option" onclick="toggleOpt(this,'error-opts')"><div class="opt-dot"></div>Operar para recuperar pérdidas (revenge trading)</div>
+            <div class="option" onclick="toggleOpt(this,'error-opts')"><div class="opt-dot"></div>Sobreoperar — más trades de los que debería</div>
+            <div class="option" onclick="toggleOpt(this,'error-opts')"><div class="opt-dot"></div>Aumentar el riesgo después de una pérdida</div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="q-label">Describe el error con detalle — qué haces exactamente, cuándo, en qué situaciones</div>
+          <textarea id="ta-error" placeholder="Ejemplo: muevo el stop cuando el precio se acerca a él y el trade lleva tiempo desarrollándose. Lo hago diciéndome que 'el setup sigue válido'..." rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERRUPTOR -->
+  <div>
+    <div class="section-label">El interruptor</div>
+    <div class="card" id="card-interruptor">
+      <div class="card-header" onclick="toggleCard('card-interruptor')">
+        <div class="card-badge cut">✂</div>
+        <div class="card-title-wrap">
+          <div class="card-title">Mi interruptor personal</div>
+          <div class="card-subtitle">La acción que rompe la secuencia</div>
+        </div>
+        <div class="card-chevron">▼</div>
+      </div>
+      <div class="card-body">
+        <div class="card-inner">
+          <div class="card-explain cut">El objetivo no es evitar el trigger — es interrumpir la secuencia antes de llegar al error. Un interruptor es cualquier acción física que cambia el estado y da a tu sistema nervioso una salida distinta. No tiene que ser complicado.</div>
+
+          <div class="q-label">Elige tu interruptor — ¿qué harás en el momento en que detectes la señal?</div>
+          <div class="options-grid" id="int-opts">
+            <div class="option" onclick="toggleOpt(this,'int-opts')"><div class="opt-dot"></div>Levantarme de la silla y salir de la habitación</div>
+            <div class="option" onclick="toggleOpt(this,'int-opts')"><div class="opt-dot"></div>Respiración en caja (4-4-4-4) — 3 ciclos</div>
+            <div class="option" onclick="toggleOpt(this,'int-opts')"><div class="opt-dot"></div>Apagar el monitor y esperar 5 minutos</div>
+            <div class="option" onclick="toggleOpt(this,'int-opts')"><div class="opt-dot"></div>Escribir en el diario lo que estoy sintiendo</div>
+            <div class="option" onclick="toggleOpt(this,'int-opts')"><div class="opt-dot"></div>Salir a caminar aunque sea 5 minutos</div>
+            <div class="option" onclick="toggleOpt(this,'int-opts')"><div class="opt-dot"></div>Escuchar música y alejarme del gráfico</div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="q-label">Define exactamente cuándo activarás el interruptor en tu caso</div>
+          <textarea id="ta-interruptor" placeholder="Ejemplo: cuando sienta la tensión en el pecho y lleve dos pérdidas en el día, antes de volver a mirar el gráfico haré 3 ciclos de respiración en caja y me levantaré..." rows="3"></textarea>
+          <div class="q-hint">La clave es la especificidad: "cuando X, haré Y". Cuanto más concreto, más fácil de ejecutar bajo presión.</div>
+
+          <div class="sep"></div>
+
+          <div class="q-label">¿A partir de qué etapa quieres poner el interruptor?</div>
+          <div class="options-grid" id="cuando-opts">
+            <div class="option" onclick="toggleOpt(this,'cuando-opts')"><div class="opt-dot"></div>Etapa 1 — cuando detecto el trigger (más difícil, más poderoso)</div>
+            <div class="option" onclick="toggleOpt(this,'cuando-opts')"><div class="opt-dot"></div>Etapa 2 — cuando siento la señal física (más accesible)</div>
+            <div class="option" onclick="toggleOpt(this,'cuando-opts')"><div class="opt-dot"></div>Etapa 3 — cuando empiezo a racionalizar (último momento antes del error)</div>
+          </div>
+          <div class="q-hint">Empieza por la etapa 2 o 3. La etapa 1 viene con el tiempo y la práctica.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="resumen-wrap">
+    <div class="resumen-header">
+      <div class="resumen-dot"></div>
+      <div class="resumen-title">Mi Secuencia — Resumen</div>
+    </div>
+    <div class="resumen-body" id="resumen-body">
+      <div class="resumen-row">
+        <div class="resumen-key t">Trigger</div>
+        <div class="resumen-val" id="rs-trigger"><em>Completa la etapa 1 para verlo aquí</em></div>
+      </div>
+      <div class="resumen-row">
+        <div class="resumen-key f">Físico</div>
+        <div class="resumen-val" id="rs-fisico"><em>Completa la etapa 2 para verlo aquí</em></div>
+      </div>
+      <div class="resumen-row">
+        <div class="resumen-key m">Mental</div>
+        <div class="resumen-val" id="rs-mental"><em>Completa la etapa 3 para verlo aquí</em></div>
+      </div>
+      <div class="resumen-row">
+        <div class="resumen-key a">Error</div>
+        <div class="resumen-val" id="rs-error"><em>Completa la etapa 4 para verlo aquí</em></div>
+      </div>
+      <div class="resumen-row">
+        <div class="resumen-key cut">Interruptor</div>
+        <div class="resumen-val" id="rs-interruptor"><em>Completa el interruptor para verlo aquí</em></div>
+      </div>
+      <button class="resumen-btn" onclick="downloadPDF()">Descargar como PDF</button>
+    </div>
+    <div id="resumen-placeholder" style="padding:18px 22px;font-size:13px;color:var(--text-dim);font-style:italic;">Completa al menos una sección para ver tu resumen aquí.</div>
+  </div>
+
+</div>
+
+<!-- SAVE BAR -->
+<div class="save-bar">
+  <div class="save-info"><strong>La Secuencia de 4 Etapas</strong> · <span id="saveStatus">Guardado automáticamente</span></div>
+  <div class="save-actions">
+    <button class="save-btn secondary" onclick="downloadPDF()">PDF</button>
+    <button class="save-btn primary" id="saveBtn" onclick="manualSave()">Guardar</button>
+  </div>
+</div>
+
+<script>
+// ─── TOGGLE CARD ───
+function toggleCard(id) {
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+// ─── TOGGLE OPTION (multi-select) ───
+function toggleOpt(el, groupId) {
+  el.classList.toggle('sel');
+  autoSave();
+  updateProgress();
+  updateResumen();
+}
+
+// ─── PROGRESS ───
+const FIELDS = ['ta-trigger','ta-fisico','ta-mental','ta-error','ta-interruptor'];
+const TOTAL = FIELDS.length;
+
+function updateProgress() {
+  let done = 0;
+  FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value.trim().length > 10) done++;
+  });
+  const pct = (done / TOTAL) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = done + ' de ' + TOTAL + ' secciones completadas';
+
+  // Mark cards done
+  FIELDS.forEach((id, i) => {
+    const el = document.getElementById(id);
+    const cardIds = ['card-trigger','card-fisico','card-mental','card-error','card-interruptor'];
+    const card = document.getElementById(cardIds[i]);
+    if (el && el.value.trim().length > 10 && card) {
+      card.classList.add('done');
+    } else if (card) {
+      card.classList.remove('done');
+    }
+  });
+}
+
+// ─── RESUMEN ───
+function updateResumen() {
+  const fields = {
+    trigger: document.getElementById('ta-trigger'),
+    fisico: document.getElementById('ta-fisico'),
+    mental: document.getElementById('ta-mental'),
+    error: document.getElementById('ta-error'),
+    interruptor: document.getElementById('ta-interruptor')
+  };
+
+  let anyFilled = false;
+
+  Object.keys(fields).forEach(key => {
+    const val = fields[key] ? fields[key].value.trim() : '';
+    const rsEl = document.getElementById('rs-' + key);
+    if (val.length > 5) {
+      rsEl.innerHTML = val;
+      rsEl.style.color = 'var(--text)';
+      anyFilled = true;
+    } else {
+      rsEl.innerHTML = '<em>Completa esta sección para verla aquí</em>';
+      rsEl.style.color = '';
+    }
+  });
+
+  const body = document.getElementById('resumen-body');
+  const placeholder = document.getElementById('resumen-placeholder');
+  if (anyFilled) {
+    body.classList.add('visible');
+    placeholder.style.display = 'none';
+  } else {
+    body.classList.remove('visible');
+    placeholder.style.display = 'block';
+  }
+}
+
+// ─── AUTOSAVE ───
+const STORAGE_KEYS = {
+  'ta-trigger': 'mc_4etapas_trigger',
+  'ta-fisico': 'mc_4etapas_fisico',
+  'ta-mental': 'mc_4etapas_mental',
+  'ta-error': 'mc_4etapas_error',
+  'ta-interruptor': 'mc_4etapas_interruptor'
+};
+
+function autoSave() {
+  FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) localStorage.setItem(STORAGE_KEYS[id], el.value);
+  });
+  document.getElementById('saveStatus').textContent = 'Guardado · ' + new Date().toLocaleTimeString('es-ES', {hour:'2-digit',minute:'2-digit'});
+}
+
+function manualSave() {
+  autoSave();
+  const btn = document.getElementById('saveBtn');
+  btn.classList.add('saved');
+  btn.textContent = 'Guardado';
+  setTimeout(() => { btn.classList.remove('saved'); btn.textContent = 'Guardar'; }, 2000);
+}
+
+// ─── LOAD ───
+window.addEventListener('load', () => {
+  FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    const saved = localStorage.getItem(STORAGE_KEYS[id]);
+    if (el && saved) el.value = saved;
+    if (el) {
+      el.addEventListener('input', () => { autoSave(); updateProgress(); updateResumen(); });
+    }
+  });
+  updateProgress();
+  updateResumen();
+  // Abrir la primera card por defecto
+  document.getElementById('card-trigger').classList.add('open');
+});
+
+// ─── PDF ───
+function downloadPDF() {
+  document.querySelectorAll('.card').forEach(c => c.classList.add('open'));
+  document.querySelectorAll('.card-body').forEach(b => { b.style.maxHeight = 'none'; });
+  document.getElementById('resumen-body').classList.add('visible');
+  document.getElementById('resumen-placeholder').style.display = 'none';
+  setTimeout(() => window.print(), 400);
+}
+</script>
+</body>
+</html>
