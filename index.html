@@ -179,6 +179,38 @@ section { padding: 100px 40px; max-width: 900px; margin: 0 auto; }
 .differentiator h4 { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
 .differentiator p { font-size: 14px; font-weight: 300; color: var(--text-2); line-height: 1.7; }
 
+.curriculum {
+  margin-top: 16px;
+  border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden;
+}
+.curr-section { border-bottom: 1px solid var(--border); }
+.curr-section:last-child { border-bottom: none; }
+.curr-header {
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 26px; cursor: pointer;
+  background: var(--bg); transition: background 0.1s;
+  user-select: none;
+}
+.curr-header:hover { background: var(--surface); }
+.curr-section.open .curr-header { background: var(--surface); }
+.curr-num { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-3); width: 20px; flex-shrink: 0; }
+.curr-title { font-size: 14px; font-weight: 500; flex: 1; }
+.curr-count { font-size: 11px; color: var(--text-3); font-family: 'Geist Mono', monospace; margin-right: 12px; }
+.curr-chevron { font-size: 11px; color: var(--text-3); transition: transform 0.2s; }
+.curr-section.open .curr-chevron { transform: rotate(180deg); }
+.curr-body { display: none; border-top: 1px solid var(--border); }
+.curr-section.open .curr-body { display: block; }
+.curr-lesson {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 26px 11px 62px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.curr-lesson:last-child { border-bottom: none; }
+.curr-lesson-name { font-size: 13px; font-weight: 300; color: var(--text-2); flex: 1; line-height: 1.4; }
+.curr-lesson-dur { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-3); flex-shrink: 0; }
+.curr-lesson-bonus { font-size: 11px; font-weight: 500; color: var(--gold); padding: 2px 8px; border: 1px solid rgba(201,151,58,0.3); border-radius: 4px; flex-shrink: 0; }
+
 .not-for {
   margin-top: 20px; padding: 28px;
   border: 1px solid var(--border); border-radius: var(--radius-lg);
@@ -345,9 +377,9 @@ footer {
 
 <section class="hero">
   <div class="hero-eyebrow">Método Consistente</div>
-  <h1>Opera con proceso.<br>No con <em>emoción.</em></h1>
+  <h1>El sistema para operar<br>con consistencia y salir <em>rentable</em> cada mes.</h1>
   <p class="hero-sub">
-    Deja de operar por intuición. Aprende a construir un sistema que puedas ejecutar igual cada día, independientemente de cómo te sientas.
+    Deja de depender de rachas y emociones. Construye un sistema real que puedas ejecutar igual cada día, independientemente de cómo te sientas.
   </p>
   <div class="hero-actions">
     <a href="https://pay.hotmart.com/T105546945M" target="_blank" class="btn-primary">
@@ -521,6 +553,179 @@ footer {
     </div>
   </div>
 
+  <div class="curriculum">
+
+    <div class="curr-section open">
+      <div class="curr-header" onclick="toggleCurr(this)">
+        <span class="curr-num">01</span>
+        <span class="curr-title">Empieza aquí</span>
+        <span class="curr-count">2 lecciones</span>
+        <span class="curr-chevron">▲</span>
+      </div>
+      <div class="curr-body">
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Introducción antes del curso</span>
+          <span class="curr-lesson-dur">01:38</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Bienvenida</span>
+          <span class="curr-lesson-dur">05:27</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="curr-section">
+      <div class="curr-header" onclick="toggleCurr(this)">
+        <span class="curr-num">02</span>
+        <span class="curr-title">Nivel 0</span>
+        <span class="curr-count">4 lecciones</span>
+        <span class="curr-chevron">▲</span>
+      </div>
+      <div class="curr-body">
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Qué es el trading</span>
+          <span class="curr-lesson-dur">03:39</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">TradingView</span>
+          <span class="curr-lesson-dur">09:01</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">MetaTrader</span>
+          <span class="curr-lesson-dur">05:06</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Velas japonesas</span>
+          <span class="curr-lesson-dur">03:04</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="curr-section">
+      <div class="curr-header" onclick="toggleCurr(this)">
+        <span class="curr-num">03</span>
+        <span class="curr-title">Estrategia y Conceptos Básicos</span>
+        <span class="curr-count">6 lecciones</span>
+        <span class="curr-chevron">▲</span>
+      </div>
+      <div class="curr-body">
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Estructura de mercado</span>
+          <span class="curr-lesson-dur">10:25</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Premium y Descuento</span>
+          <span class="curr-lesson-dur">06:29</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Liquidez</span>
+          <span class="curr-lesson-dur">06:06</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Modelo de Entrada 1</span>
+          <span class="curr-lesson-dur">07:49</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Modelo de Entrada 2</span>
+          <span class="curr-lesson-dur">14:56</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Estrategia mecánica rentable</span>
+          <span class="curr-lesson-bonus">BONUS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="curr-section">
+      <div class="curr-header" onclick="toggleCurr(this)">
+        <span class="curr-num">04</span>
+        <span class="curr-title">Sistemas de Trading</span>
+        <span class="curr-count">3 lecciones</span>
+        <span class="curr-chevron">▲</span>
+      </div>
+      <div class="curr-body">
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Plan de Trading</span>
+          <span class="curr-lesson-dur">09:56</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Flowchart — Sistema Visual</span>
+          <span class="curr-lesson-dur">03:17</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Documentar — Journaling</span>
+          <span class="curr-lesson-dur">08:04</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="curr-section">
+      <div class="curr-header" onclick="toggleCurr(this)">
+        <span class="curr-num">05</span>
+        <span class="curr-title">Psicología</span>
+        <span class="curr-count">4 lecciones</span>
+        <span class="curr-chevron">▲</span>
+      </div>
+      <div class="curr-body">
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Notas sobre psicología y mentalidad</span>
+          <span class="curr-lesson-dur">08:03</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">La causa de tu inconsistencia — El Sistema Nervioso</span>
+          <span class="curr-lesson-dur">07:01</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">La secuencia del error — 4 Etapas</span>
+          <span class="curr-lesson-dur">09:31</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Herramienta Práctica</span>
+          <span class="curr-lesson-dur">05:41</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="curr-section">
+      <div class="curr-header" onclick="toggleCurr(this)">
+        <span class="curr-num">06</span>
+        <span class="curr-title">Sistema de Trading</span>
+        <span class="curr-count">3 lecciones</span>
+        <span class="curr-chevron">▲</span>
+      </div>
+      <div class="curr-body">
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Trabajar tu sistema nervioso</span>
+          <span class="curr-lesson-dur">08:21</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Descubre tus errores — Crea Hábitos propios</span>
+          <span class="curr-lesson-dur">11:50</span>
+        </div>
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Protocolo de reinicio</span>
+          <span class="curr-lesson-dur">05:04</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="curr-section">
+      <div class="curr-header" onclick="toggleCurr(this)">
+        <span class="curr-num">07</span>
+        <span class="curr-title">Sistemas y Procesos</span>
+        <span class="curr-count">1 lección</span>
+        <span class="curr-chevron">▲</span>
+      </div>
+      <div class="curr-body">
+        <div class="curr-lesson">
+          <span class="curr-lesson-name">Cómo medir tu Progreso</span>
+          <span class="curr-lesson-dur">04:55</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
   <div class="differentiator">
     <div class="diff-dot"></div>
     <div>
@@ -602,6 +807,11 @@ footer {
 </footer>
 
 <script>
+function toggleCurr(header) {
+  const section = header.parentElement;
+  section.classList.toggle('open');
+}
+
 const track = document.querySelector('.roadmap-track');
 if (track) {
   const obs = new IntersectionObserver(([e]) => {
