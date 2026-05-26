@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analizador de patrones — Método Consistente</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060a;
+  --surface: #0e0e16;
+  --surface2: #14141e;
+  --border: rgba(255,255,255,0.06);
+  --border-active: rgba(212,167,58,0.35);
+  --accent: #d4a73a;
+  --accent-dim: rgba(212,167,58,0.07);
+  --accent-glow: rgba(212,167,58,0.15);
+  --purple: #a78bfa;
+  --purple-dim: rgba(167,139,250,0.07);
+  --red: #e84040;
+  --red-dim: rgba(232,64,64,0.07);
+  --green: #2ecc8a;
+  --green-dim: rgba(46,204,138,0.07);
+  --blue: #60a5fa;
+  --text: #ede8df;
+  --text-mid: #8a8278;
+  --text-dim: #4a4540;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* NOISE OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* HEADER */
+.header {
+  padding: 48px 40px 32px;
+  max-width: 780px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.header-tag {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-tag::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.header-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(38px, 6vw, 60px);
+  letter-spacing: 0.04em;
+  line-height: 0.95;
+  margin-bottom: 20px;
+}
+.header-title .accent { color: var(--accent); }
+
+.header-desc {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.7;
+  max-width: 520px;
+  border-left: 2px solid var(--accent);
+  padding-left: 16px;
+  font-style: italic;
+}
+
+/* PROGRESS BAR */
+.progress-wrap {
+  max-width: 780px;
+  margin: 0 auto 32px;
+  padding: 0 40px;
+  position: relative;
+  z-index: 1;
+}
+.progress-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.progress-label span { color: var(--accent); }
+.progress-track {
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #f5c842);
+  border-radius: 2px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 0%;
+}
+
+/* QUESTIONS */
+.questions {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.question {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.question.active {
+  border-color: var(--border-active);
+  box-shadow: 0 0 40px var(--accent-glow), 0 4px 20px rgba(0,0,0,0.4);
+}
+.question.done {
+  border-color: rgba(46,204,138,0.2);
+}
+
+.q-header {
+  padding: 18px 22px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.q-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 32px;
+  color: var(--text-dim);
+  transition: color 0.3s;
+}
+.question.active .q-num { color: var(--accent); }
+.question.done .q-num { color: var(--green); }
+
+.q-content { flex: 1; }
+
+.q-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.q-sub {
+  font-size: 12px;
+  color: var(--text-mid);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.q-status {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  transition: all 0.3s;
+}
+.question.done .q-status {
+  background: var(--green-dim);
+  border-color: rgba(46,204,138,0.3);
+  color: var(--green);
+}
+
+.q-body {
+  padding: 0 22px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s;
+}
+.q-body.open {
+  max-height: 400px;
+  padding: 0 22px 22px;
+}
+
+.q-textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+  resize: vertical;
+  min-height: 100px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.q-textarea:focus {
+  border-color: var(--border-active);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.q-textarea::placeholder {
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.q-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 8px;
+  line-height: 1.5;
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+}
+.q-hint::before {
+  content: '→';
+  color: var(--accent);
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+/* THEME COLORS per question */
+.q1 .q-num { } /* accent on active, already handled */
+.q2 .question.active .q-num { color: var(--red); }
+.q2 .question.active { border-color: rgba(232,64,64,0.35); box-shadow: 0 0 40px rgba(232,64,64,0.1), 0 4px 20px rgba(0,0,0,0.4); }
+.q3 .question.active .q-num { color: var(--purple); }
+.q3 .question.active { border-color: rgba(167,139,250,0.35); box-shadow: 0 0 40px rgba(167,139,250,0.1), 0 4px 20px rgba(0,0,0,0.4); }
+.q4 .question.active .q-num { color: var(--blue); }
+.q4 .question.active { border-color: rgba(96,165,250,0.35); box-shadow: 0 0 40px rgba(96,165,250,0.1), 0 4px 20px rgba(0,0,0,0.4); }
+.q5 .question.active .q-num { color: var(--red); }
+.q5 .question.active { border-color: rgba(232,64,64,0.35); }
+.q6 .question.active .q-num { color: var(--green); }
+.q6 .question.active { border-color: rgba(46,204,138,0.35); box-shadow: 0 0 40px rgba(46,204,138,0.1), 0 4px 20px rgba(0,0,0,0.4); }
+.q7 .question.active .q-num { color: var(--accent); }
+
+/* SUMMARY */
+.summary {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+  display: none;
+  position: relative;
+  z-index: 1;
+}
+.summary.visible { display: block; }
+
+.summary-header {
+  background: var(--surface);
+  border: 1px solid rgba(46,204,138,0.25);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.summary-icon { font-size: 32px; margin-bottom: 12px; }
+.summary-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.04em;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.summary-sub { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+
+.summary-answers {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.answer-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+.answer-q {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.answer-text {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+.answer-empty {
+  font-size: 13px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.summary-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #0a0a0f;
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text-mid);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { border-color: var(--border-active); color: var(--text); }
+
+/* SAVE BAR */
+.save-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(6,6,10,0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  z-index: 100;
+}
+.save-info {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+.save-info strong { color: var(--text-mid); font-weight: 500; }
+.save-btn {
+  background: var(--accent);
+  color: #0a0a0f;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+.save-btn:hover { opacity: 0.9; }
+.save-btn.saved { background: var(--green); }
+
+/* FADE IN */
+.question {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.4s ease forwards;
+}
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+.question:nth-child(1) { animation-delay: 0.05s; }
+.question:nth-child(2) { animation-delay: 0.1s; }
+.question:nth-child(3) { animation-delay: 0.15s; }
+.question:nth-child(4) { animation-delay: 0.2s; }
+.question:nth-child(5) { animation-delay: 0.25s; }
+.question:nth-child(6) { animation-delay: 0.3s; }
+.question:nth-child(7) { animation-delay: 0.35s; }
+
+@media (max-width: 600px) {
+  .header, .progress-wrap, .questions, .summary { padding-left: 20px; padding-right: 20px; }
+  .save-bar { padding: 12px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag">Módulo 1 · Psicología · Recurso</div>
+  <h1 class="header-title">Analizador de<br><span class="accent">patrones</span></h1>
+  <p class="header-desc">Siete preguntas para ir a la causa de tu error más repetido. No a los síntomas. No al efecto. A lo que está pasando dentro de ti y por qué sigue pasando.</p>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span>Progreso</span>
+    <span id="progressText">0 de 7 completadas</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<div class="questions" id="questionsWrap">
+
+  <div class="question q1" id="q1">
+    <div class="q-header" onclick="toggleQ('q1')">
+      <div class="q-num">01</div>
+      <div class="q-content">
+        <div class="q-title">Describe el error en detalle</div>
+        <div class="q-sub">Incluye ejemplos del comportamiento, tus emociones y tu mentalidad en ese momento</div>
+      </div>
+      <div class="q-status" id="status-q1"></div>
+    </div>
+    <div class="q-body" id="body-q1">
+      <textarea class="q-textarea" id="text-q1" placeholder="Ejemplo: cuando el precio se acerca a mi stop loss, cierro la operación manualmente antes de que salte. Lo hago aunque el setup sigue siendo válido. En ese momento siento una presión en el pecho y solo pienso en no perder lo que había ganado..." oninput="updateProgress()" rows="5"></textarea>
+      <div class="q-hint">Sé específico. Cuanto más concreto, más útil será la respuesta a las siguientes preguntas.</div>
+    </div>
+  </div>
+
+  <div class="question q2" id="q2">
+    <div class="q-header" onclick="toggleQ('q2')">
+      <div class="q-num">02</div>
+      <div class="q-content">
+        <div class="q-title">¿Qué suele pasar justo antes?</div>
+        <div class="q-sub">Las condiciones que lo desencadenan y la respuesta emocional que impulsa el comportamiento</div>
+      </div>
+      <div class="q-status" id="status-q2"></div>
+    </div>
+    <div class="q-body" id="body-q2">
+      <textarea class="q-textarea" id="text-q2" placeholder="Ejemplo: suele pasar cuando ya he tenido una pérdida antes en el día, o cuando la operación ha estado en beneficio y ha vuelto a breakeven. También cuando llevo mucho tiempo mirando el gráfico sin hacer nada..." oninput="updateProgress()" rows="5"></textarea>
+      <div class="q-hint">Estos son tus triggers. Reconocerlos es el primer paso para interrumpir el patrón.</div>
+    </div>
+  </div>
+
+  <div class="question q3" id="q3">
+    <div class="q-header" onclick="toggleQ('q3')">
+      <div class="q-num">03</div>
+      <div class="q-content">
+        <div class="q-title">¿Cuál es la intención positiva detrás?</div>
+        <div class="q-sub">Aunque sea irracional, explica la lógica o justificación detrás del comportamiento</div>
+      </div>
+      <div class="q-status" id="status-q3"></div>
+    </div>
+    <div class="q-body" id="body-q3">
+      <textarea class="q-textarea" id="text-q3" placeholder="Ejemplo: quiero protegerme de una pérdida mayor. Prefiero asegurar algo a no tener nada. Mi mente cree que si cierro ahora estoy siendo inteligente y gestionando el riesgo, aunque en realidad estoy rompiendo el plan..." oninput="updateProgress()" rows="5"></textarea>
+      <div class="q-hint">Todo error tiene una intención positiva para el sistema nervioso. Encontrarla no justifica el error — lo explica.</div>
+    </div>
+  </div>
+
+  <div class="question q4" id="q4">
+    <div class="q-header" onclick="toggleQ('q4')">
+      <div class="q-num">04</div>
+      <div class="q-content">
+        <div class="q-title">¿Qué hay en ti que contribuye a este patrón?</div>
+        <div class="q-sub">¿Qué hay sobre ti o tu experiencia pasada que podría ser una razón por la que tienes esta tendencia?</div>
+      </div>
+      <div class="q-status" id="status-q4"></div>
+    </div>
+    <div class="q-body" id="body-q4">
+      <textarea class="q-textarea" id="text-q4" placeholder="Ejemplo: he perdido una cuenta antes por no cerrar a tiempo. Desde entonces mi cerebro asocia 'dejar correr' con peligro. También tiendo a ser impaciente en general — en el trabajo, en la vida. No me gusta la incertidumbre..." oninput="updateProgress()" rows="5"></textarea>
+      <div class="q-hint">Esta es la pregunta más personal. No tienes que compartirla — es para ti.</div>
+    </div>
+  </div>
+
+  <div class="question q5" id="q5">
+    <div class="q-header" onclick="toggleQ('q5')">
+      <div class="q-num">05</div>
+      <div class="q-content">
+        <div class="q-title">¿Cómo sabotea este comportamiento tu trading?</div>
+        <div class="q-sub">Describe cómo afecta negativamente tus operaciones a pesar de cualquier intención positiva</div>
+      </div>
+      <div class="q-status" id="status-q5"></div>
+    </div>
+    <div class="q-body" id="body-q5">
+      <textarea class="q-textarea" id="text-q5" placeholder="Ejemplo: mi ratio ganancia/pérdida no cuadra porque siempre cierro los ganadores pequeños y los perdedores se me van más. Aunque tenga razón en la dirección, no capturo el movimiento. Mi estadística no refleja mi análisis real..." oninput="updateProgress()" rows="5"></textarea>
+      <div class="q-hint">La distancia entre lo que sabes y lo que ejecutas — aquí es donde vive el coste real.</div>
+    </div>
+  </div>
+
+  <div class="question q6" id="q6">
+    <div class="q-header" onclick="toggleQ('q6')">
+      <div class="q-num">06</div>
+      <div class="q-content">
+        <div class="q-title">¿Cuál es la mejor forma de lograr esa intención positiva?</div>
+        <div class="q-sub">¿Qué hábitos o comportamientos puedes hacer para reemplazar el patrón descrito en la pregunta 3?</div>
+      </div>
+      <div class="q-status" id="status-q6"></div>
+    </div>
+    <div class="q-body" id="body-q6">
+      <textarea class="q-textarea" id="text-q6" placeholder="Ejemplo: puedo protegerme del riesgo definiendo el stop antes de entrar y no mirando el PnL mientras la operación está abierta. Puedo gestionar la incertidumbre con una regla de 'no toco nada hasta que el precio llegue a X zona'..." oninput="updateProgress()" rows="5"></textarea>
+      <div class="q-hint">Esta es tu respuesta de nivel superior. No reprimes el impulso — lo reemplazas con algo que logra lo mismo sin romper el plan.</div>
+    </div>
+  </div>
+
+  <div class="question q7" id="q7">
+    <div class="q-header" onclick="toggleQ('q7')">
+      <div class="q-num">07</div>
+      <div class="q-content">
+        <div class="q-title">¿Cómo lo aplicarás específicamente a tu proceso?</div>
+        <div class="q-sub">Describe en detalle las acciones concretas que tomarás para asegurarte de que puedes aplicar esto</div>
+      </div>
+      <div class="q-status" id="status-q7"></div>
+    </div>
+    <div class="q-body" id="body-q7">
+      <textarea class="q-textarea" id="text-q7" placeholder="Ejemplo: antes de cada entrada voy a escribir en un post-it: 'el stop está en X, no lo toco'. Voy a cerrar el panel de PnL durante la operación. Si siento el impulso de cerrar, esperaré 60 segundos y me haré la pregunta: ¿el setup sigue siendo válido?..." oninput="updateProgress()" rows="5"></textarea>
+      <div class="q-hint">La especificidad es todo. "Voy a ser más disciplinado" no funciona. "Haré X cuando pase Y" sí funciona.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="summary" id="summary">
+  <div class="summary-header">
+    <div class="summary-icon">◆</div>
+    <div class="summary-title">Análisis completado</div>
+    <div class="summary-sub">Esto es tu mapa. Guárdalo. Vuelve a leerlo antes de cada sesión durante las próximas dos semanas. El patrón no desaparece solo con identificarlo — desaparece con ejecutar la respuesta de la pregunta 7 cada vez que aparece el trigger de la pregunta 2.</div>
+  </div>
+  <div class="summary-answers" id="summaryAnswers"></div>
+  <div class="summary-actions">
+    <button class="btn btn-primary" onclick="downloadPDF()">Descargar PDF</button>
+    <button class="btn btn-secondary" onclick="resetAll()">Borrar respuestas</button>
+  </div>
+</div>
+
+<!-- PATRON SWITCHER BAR -->
+<div class="patron-bar" id="patronBar">
+  <div class="patron-bar-inner">
+    <div class="patron-label">Mis patrones</div>
+    <div class="patron-tabs" id="patronTabs"></div>
+    <button class="patron-new" onclick="newPatron()">+ Nuevo patrón</button>
+  </div>
+</div>
+
+<div class="save-bar">
+  <div class="save-info">
+    <strong id="saveInfoName">Patrón 1</strong><br>
+    <span id="saveInfoSub">Guardado automáticamente</span>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button class="save-btn" id="downloadBtn" onclick="downloadPDF()">Descargar PDF</button>
+    <button class="save-btn" id="saveBtn" onclick="saveAll()">Guardar</button>
+  </div>
+</div>
+
+<style>
+.patron-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(6,6,10,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 200;
+  padding: 10px 40px;
+}
+.patron-bar-inner {
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.patron-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.patron-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+.patron-tab {
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.patron-tab:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+.patron-tab.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.patron-tab .tab-delete {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-left: 2px;
+  line-height: 1;
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+.patron-tab .tab-delete:hover { color: var(--red); background: var(--red-dim); }
+.patron-new {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 5px;
+  border: 1px dashed rgba(212,167,58,0.3);
+  background: var(--accent-dim);
+  color: var(--accent);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.patron-new:hover { border-color: var(--accent); }
+
+/* Offset header for fixed bar */
+.header { padding-top: 80px !important; }
+
+/* PRINT STYLES */
+@media print {
+  .patron-bar, .save-bar, .progress-wrap { display: none !important; }
+  body { background: white; color: black; }
+  .header { padding-top: 32px !important; }
+  .header-tag, .header-title, .header-desc { color: black !important; }
+  .header-tag::before { background: black !important; }
+  .header-desc { border-left-color: black !important; }
+  .question { background: white; border: 1px solid #ccc; break-inside: avoid; }
+  .q-body { max-height: none !important; padding: 0 22px 22px !important; }
+  .q-textarea { background: #f5f5f5; color: black; border-color: #ccc; min-height: auto; }
+  .q-num { color: #333 !important; }
+  .q-title { color: black !important; }
+  .q-sub, .q-hint { color: #666 !important; }
+  .summary { display: block !important; }
+  .summary-header { background: #f0f0f0; border-color: #ccc; }
+  .summary-title { color: #333 !important; }
+  .summary-sub { color: #555 !important; }
+  .answer-card { background: #f9f9f9; border-color: #ddd; }
+  .answer-q { color: #555 !important; }
+  .answer-text { color: #333 !important; }
+  .summary-actions { display: none !important; }
+  .questions { padding-bottom: 20px; }
+}
+</style>
+
+<script>
+const questions = ['q1','q2','q3','q4','q5','q6','q7'];
+const qTitles = [
+  'Descripción del error',
+  'Qué pasa justo antes',
+  'Intención positiva',
+  'Qué hay en ti',
+  'Cómo te sabotea',
+  'La respuesta de nivel superior',
+  'Cómo lo aplicarás'
+];
+
+let currentPatron = 1;
+let patrones = {};
+
+// ─── INIT ───
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('mc_patrones');
+  if (saved) {
+    patrones = JSON.parse(saved);
+  } else {
+    patrones = { 1: { name: 'Patrón 1', answers: {} } };
+    savePatrones();
+  }
+  currentPatron = parseInt(localStorage.getItem('mc_current') || '1');
+  if (!patrones[currentPatron]) currentPatron = parseInt(Object.keys(patrones)[0]);
+  renderTabs();
+  loadPatron(currentPatron);
+});
+
+// ─── SAVE/LOAD ───
+function savePatrones() {
+  localStorage.setItem('mc_patrones', JSON.stringify(patrones));
+}
+
+function loadPatron(id) {
+  currentPatron = id;
+  localStorage.setItem('mc_current', id);
+  const p = patrones[id];
+  questions.forEach(qid => {
+    const el = document.getElementById('text-' + qid);
+    el.value = p.answers[qid] || '';
+  });
+  document.getElementById('saveInfoName').textContent = p.name;
+  updateProgress();
+  renderTabs();
+  const first = questions.find(qid => !document.getElementById('text-' + qid).value.trim());
+  toggleQ(first || 'q1');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function saveCurrentAnswers() {
+  if (!patrones[currentPatron]) return;
+  questions.forEach(qid => {
+    patrones[currentPatron].answers[qid] = document.getElementById('text-' + qid).value;
+  });
+  savePatrones();
+}
+
+function saveAll() {
+  saveCurrentAnswers();
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = '✓ Guardado';
+  btn.classList.add('saved');
+  setTimeout(() => { btn.textContent = 'Guardar'; btn.classList.remove('saved'); }, 2000);
+}
+
+// ─── PATRON MANAGEMENT ───
+function newPatron() {
+  const ids = Object.keys(patrones).map(Number);
+  const newId = Math.max(...ids) + 1;
+  const name = prompt('Nombre del patrón (ej: "Mover el stop", "Sobreoperar"):') || `Patrón ${newId}`;
+  patrones[newId] = { name, answers: {} };
+  savePatrones();
+  renderTabs();
+  loadPatron(newId);
+}
+
+function deletePatron(id, e) {
+  e.stopPropagation();
+  const ids = Object.keys(patrones);
+  if (ids.length === 1) { alert('Necesitas al menos un patrón.'); return; }
+  if (!confirm(`¿Borrar "${patrones[id].name}"? Esto no se puede deshacer.`)) return;
+  delete patrones[id];
+  savePatrones();
+  const remaining = Object.keys(patrones).map(Number);
+  renderTabs();
+  loadPatron(remaining[0]);
+}
+
+function renamePatron(id, e) {
+  e.stopPropagation();
+  const current = patrones[id].name;
+  const newName = prompt('Nuevo nombre:', current);
+  if (newName && newName.trim()) {
+    patrones[id].name = newName.trim();
+    savePatrones();
+    renderTabs();
+    if (id === currentPatron) {
+      document.getElementById('saveInfoName').textContent = newName.trim();
+    }
+  }
+}
+
+function renderTabs() {
+  const container = document.getElementById('patronTabs');
+  container.innerHTML = '';
+  Object.entries(patrones).forEach(([id, p]) => {
+    const numId = parseInt(id);
+    const tab = document.createElement('div');
+    tab.className = 'patron-tab' + (numId === currentPatron ? ' active' : '');
+    const done = questions.filter(qid => (p.answers[qid] || '').trim().length > 20).length;
+    tab.innerHTML = `
+      <span ondblclick="renamePatron(${numId}, event)" title="Doble clic para renombrar">${p.name}</span>
+      <span style="font-size:10px;color:inherit;opacity:0.6;">${done}/7</span>
+      <span class="tab-delete" onclick="deletePatron(${numId}, event)" title="Borrar">✕</span>
+    `;
+    tab.addEventListener('click', () => {
+      saveCurrentAnswers();
+      loadPatron(numId);
+    });
+    container.appendChild(tab);
+  });
+}
+
+// ─── QUESTIONS ───
+function toggleQ(id) {
+  const body = document.getElementById('body-' + id);
+  const q = document.getElementById(id);
+  const isOpen = body.classList.contains('open');
+  questions.forEach(qid => {
+    document.getElementById('body-' + qid).classList.remove('open');
+    document.getElementById(qid).classList.remove('active');
+  });
+  if (!isOpen) {
+    body.classList.add('open');
+    q.classList.add('active');
+    setTimeout(() => { q.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+  }
+}
+
+function updateProgress() {
+  let done = 0;
+  questions.forEach(id => {
+    const val = document.getElementById('text-' + id).value.trim();
+    const status = document.getElementById('status-' + id);
+    const q = document.getElementById(id);
+    if (val.length > 20) {
+      done++;
+      status.textContent = '✓';
+      q.classList.add('done');
+    } else {
+      status.textContent = '';
+      q.classList.remove('done');
+    }
+    saveCurrentAnswers();
+  });
+  const pct = (done / 7) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = done + ' de 7 completadas';
+  document.getElementById('saveInfoSub').textContent = done === 7 ? '✓ Análisis completo' : 'Guardado automáticamente';
+  if (done === 7) showSummary();
+  else document.getElementById('summary').classList.remove('visible');
+  renderTabs();
+}
+
+// ─── SUMMARY ───
+function showSummary() {
+  const summary = document.getElementById('summary');
+  const answers = document.getElementById('summaryAnswers');
+  summary.classList.add('visible');
+  answers.innerHTML = '';
+  const p = patrones[currentPatron];
+  const titleCard = document.createElement('div');
+  titleCard.className = 'answer-card';
+  titleCard.style.borderColor = 'rgba(212,167,58,0.3)';
+  titleCard.innerHTML = `<div class="answer-q" style="color:var(--accent)">Patrón analizado</div><div class="answer-text" style="color:var(--text);font-size:16px;font-weight:500;">${p.name}</div>`;
+  answers.appendChild(titleCard);
+  questions.forEach((id, i) => {
+    const val = document.getElementById('text-' + id).value.trim();
+    const card = document.createElement('div');
+    card.className = 'answer-card';
+    card.innerHTML = `
+      <div class="answer-q">Pregunta ${i+1} — ${qTitles[i]}</div>
+      ${val ? `<div class="answer-text">${val}</div>` : '<div class="answer-empty">Sin respuesta</div>'}
+    `;
+    answers.appendChild(card);
+  });
+  summary.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ─── DOWNLOAD ───
+function downloadPDF() {
+  const p = patrones[currentPatron];
+  const done = questions.filter(qid => (p.answers[qid] || '').trim().length > 20).length;
+  if (done < 3) {
+    alert('Completa al menos 3 preguntas antes de descargar.');
+    return;
+  }
+  // Open all questions for print
+  questions.forEach(id => {
+    document.getElementById('body-' + id).classList.add('open');
+  });
+  showSummary();
+  setTimeout(() => { window.print(); }, 300);
+}
+
+function resetAll() {
+  if (confirm(`¿Borrar las respuestas de "${patrones[currentPatron].name}"?`)) {
+    patrones[currentPatron].answers = {};
+    savePatrones();
+    questions.forEach(id => { document.getElementById('text-' + id).value = ''; });
+    updateProgress();
+    document.getElementById('summary').classList.remove('visible');
+    toggleQ('q1');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+// Auto-save on input
+questions.forEach(id => {
+  document.getElementById('text-' + id).addEventListener('input', updateProgress);
+});
+</script>
+
+</body>
+</html>

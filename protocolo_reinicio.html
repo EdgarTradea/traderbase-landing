@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocolo de Reinicio — Método Consistente</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060a;
+  --surface: #0e0e16;
+  --surface2: #14141e;
+  --border: rgba(255,255,255,0.06);
+  --accent: #d4a73a;
+  --accent-dim: rgba(212,167,58,0.07);
+  --accent-mid: rgba(212,167,58,0.18);
+  --accent-glow: rgba(212,167,58,0.15);
+  --blue: #60a5fa;
+  --blue-dim: rgba(96,165,250,0.07);
+  --blue-mid: rgba(96,165,250,0.18);
+  --green: #2ecc8a;
+  --green-dim: rgba(46,204,138,0.07);
+  --green-mid: rgba(46,204,138,0.18);
+  --text: #ede8df;
+  --text-mid: #8a8278;
+  --text-dim: #4a4540;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* PATRON BAR */
+.patron-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: rgba(6,6,10,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 200;
+  padding: 10px 40px;
+}
+.patron-bar-inner {
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.patron-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.patron-tabs { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+.patron-tab {
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-family: 'DM Sans', sans-serif;
+}
+.patron-tab:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+.patron-tab.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.patron-tab .tab-delete {
+  font-size: 10px;
+  color: var(--text-dim);
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+.patron-tab .tab-delete:hover { color: #e84040; background: rgba(232,64,64,0.1); }
+.patron-new {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 5px;
+  border: 1px dashed rgba(212,167,58,0.3);
+  background: var(--accent-dim);
+  color: var(--accent);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.patron-new:hover { border-color: var(--accent); }
+
+/* HEADER */
+.header {
+  padding: 80px 40px 32px;
+  max-width: 780px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.header-tag {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-tag::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+.header-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(38px, 6vw, 60px);
+  letter-spacing: 0.04em;
+  line-height: 0.95;
+  margin-bottom: 20px;
+}
+.header-title .accent { color: var(--accent); }
+.header-desc {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.7;
+  max-width: 500px;
+  border-left: 2px solid var(--accent);
+  padding-left: 16px;
+  font-style: italic;
+}
+
+/* TRIGGER TYPE */
+.trigger-section {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 40px 24px;
+  position: relative;
+  z-index: 1;
+}
+.trigger-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.trigger-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.trigger-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.trigger-card:hover { border-color: rgba(255,255,255,0.12); }
+.trigger-card.selected { border-color: var(--accent); background: var(--accent-dim); }
+.trigger-card-icon { font-size: 18px; }
+.trigger-card-name { font-size: 12px; font-weight: 500; color: var(--text); }
+.trigger-card-desc { font-size: 11px; color: var(--text-mid); line-height: 1.4; }
+
+.trigger-custom {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  width: 100%;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 8px;
+}
+.trigger-custom:focus { border-color: var(--accent-mid); }
+.trigger-custom::placeholder { color: var(--text-dim); font-style: italic; }
+
+/* STEPS */
+.steps-wrap {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.step-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.step-card.s1 { }
+.step-card.s2 { }
+.step-card.s3 { }
+.step-card.s1.active { border-color: var(--accent-mid); box-shadow: 0 0 30px var(--accent-glow); }
+.step-card.s2.active { border-color: var(--blue-mid); box-shadow: 0 0 30px rgba(96,165,250,0.1); }
+.step-card.s3.active { border-color: var(--green-mid); box-shadow: 0 0 30px rgba(46,204,138,0.1); }
+
+.step-header {
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.step-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 36px;
+  color: var(--text-dim);
+  transition: color 0.3s;
+}
+.s1.active .step-num { color: var(--accent); }
+.s2.active .step-num { color: var(--blue); }
+.s3.active .step-num { color: var(--green); }
+.s1.done .step-num { color: var(--accent); opacity: 0.5; }
+.s2.done .step-num { color: var(--blue); opacity: 0.5; }
+.s3.done .step-num { color: var(--green); opacity: 0.5; }
+
+.step-meta { flex: 1; }
+.step-title { font-size: 16px; font-weight: 500; line-height: 1.3; margin-bottom: 3px; }
+.step-sub { font-size: 12px; color: var(--text-mid); }
+.step-status {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  transition: all 0.3s;
+}
+.done .step-status { background: var(--green-dim); border-color: var(--green-mid); color: var(--green); }
+
+.step-body {
+  padding: 0 22px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1), padding 0.3s;
+}
+.step-body.open { max-height: 900px; padding: 0 22px 24px; }
+
+/* QUESTIONS INSIDE STEPS */
+.step-questions { display: flex; flex-direction: column; gap: 14px; }
+.sq {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.sq-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.s1 .sq-label { color: var(--accent); }
+.s2 .sq-label { color: var(--blue); }
+.s3 .sq-label { color: var(--green); }
+.sq-q { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 8px; line-height: 1.4; }
+.sq-hint { font-size: 11px; color: var(--text-dim); font-style: italic; margin-bottom: 8px; line-height: 1.5; }
+.sq-textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+  resize: vertical;
+  min-height: 72px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.sq-textarea:focus { border-color: rgba(255,255,255,0.15); }
+.sq-textarea::placeholder { color: var(--text-dim); font-style: italic; }
+
+/* OPTIONS */
+.sq-options { display: flex; flex-direction: column; gap: 6px; }
+.sq-option {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  cursor: pointer;
+  padding: 9px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  transition: all 0.15s;
+  font-size: 12px;
+  color: var(--text-mid);
+  font-family: 'DM Sans', sans-serif;
+}
+.sq-option:hover { border-color: rgba(255,255,255,0.12); color: var(--text); }
+.sq-option.sel { border-color: var(--accent-mid); background: var(--accent-dim); color: var(--text); }
+.sq-option .opt-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all 0.15s;
+}
+.sq-option.sel .opt-dot { background: var(--accent); border-color: var(--accent); }
+
+/* STEP DIVIDER HINT */
+.step-divider {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 4px 0;
+  letter-spacing: 0.06em;
+}
+
+/* SUMMARY */
+.summary {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 40px 100px;
+  display: none;
+  position: relative;
+  z-index: 1;
+}
+.summary.visible { display: block; }
+.summary-header {
+  background: var(--surface);
+  border: 1px solid var(--green-mid);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.summary-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 0.04em;
+  color: var(--green);
+  margin-bottom: 6px;
+}
+.summary-sub { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+.summary-blocks { display: flex; flex-direction: column; gap: 10px; }
+.sum-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+.sum-block-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.sum-block.sb1 .sum-block-label { color: var(--accent); }
+.sum-block.sb2 .sum-block-label { color: var(--blue); }
+.sum-block.sb3 .sum-block-label { color: var(--green); }
+.sum-item { font-size: 12px; color: var(--text-dim); margin-bottom: 4px; font-weight: 500; }
+.sum-answer { font-size: 13px; color: var(--text-mid); line-height: 1.6; white-space: pre-wrap; margin-bottom: 10px; }
+.sum-answer:last-child { margin-bottom: 0; }
+.summary-actions { display: flex; gap: 10px; margin-top: 16px; }
+.btn {
+  flex: 1;
+  padding: 13px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-primary { background: var(--accent); color: #06060a; }
+.btn-primary:hover { opacity: 0.88; }
+.btn-secondary { background: var(--surface2); color: var(--text-mid); border: 1px solid var(--border); }
+.btn-secondary:hover { color: var(--text); }
+
+/* SAVE BAR */
+.save-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(6,6,10,0.96);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+}
+.save-info { font-size: 12px; color: var(--text-dim); }
+.save-info strong { color: var(--text-mid); }
+.save-actions { display: flex; gap: 8px; }
+.save-btn {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.save-btn.primary { background: var(--accent); color: #06060a; }
+.save-btn.secondary { background: var(--surface2); color: var(--text-mid); border: 1px solid var(--border); }
+.save-btn.saved { background: var(--green) !important; color: #06060a !important; }
+
+@media print {
+  .patron-bar, .save-bar { display: none !important; }
+  body { background: white; color: black; }
+  .header { padding-top: 24px !important; }
+  .step-body { max-height: none !important; padding: 0 22px 24px !important; }
+  .step-card { background: white; border-color: #ddd; break-inside: avoid; }
+  .sq, .sq-textarea { background: #f5f5f5; color: black; border-color: #ccc; }
+  .summary { display: block !important; padding-bottom: 20px; }
+  .summary-header { background: #f0f0f0; border-color: #ccc; }
+  .summary-actions { display: none !important; }
+}
+
+@media (max-width: 600px) {
+  .header, .trigger-section, .steps-wrap, .summary { padding-left: 18px; padding-right: 18px; }
+  .trigger-grid { grid-template-columns: 1fr 1fr; }
+  .save-bar { padding: 10px 18px; }
+  .patron-bar { padding: 8px 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- PATRON BAR -->
+<div class="patron-bar" id="patronBar">
+  <div class="patron-bar-inner">
+    <div class="patron-label">Mis protocolos</div>
+    <div class="patron-tabs" id="patronTabs"></div>
+    <button class="patron-new" onclick="newPatron()">+ Nuevo</button>
+  </div>
+</div>
+
+<div class="header">
+  <div class="header-tag">Módulo 1 · Psicología · Recurso</div>
+  <h1 class="header-title">Protocolo de<br><span class="accent">reinicio</span></h1>
+  <p class="header-desc">Cuando ocurre un evento grande — bueno o malo — necesitas frenar antes de que la emoción tome el control. Esto es el proceso.</p>
+</div>
+
+<!-- TRIGGER TYPE -->
+<div class="trigger-section">
+  <div class="trigger-label">¿Qué evento ha ocurrido?</div>
+  <div class="trigger-grid">
+    <div class="trigger-card" onclick="selectTrigger(this, 'Pérdida de cuenta')" id="tc1">
+      <div class="trigger-card-icon">📉</div>
+      <div class="trigger-card-name">Pérdida de cuenta</div>
+      <div class="trigger-card-desc">Has explotado una cuenta fondeada o cuenta propia</div>
+    </div>
+    <div class="trigger-card" onclick="selectTrigger(this, 'Racha perdedora')" id="tc2">
+      <div class="trigger-card-icon">🔴</div>
+      <div class="trigger-card-name">Racha perdedora</div>
+      <div class="trigger-card-desc">Semanas seguidas con resultados negativos</div>
+    </div>
+    <div class="trigger-card" onclick="selectTrigger(this, 'Pago / cuenta pasada')" id="tc3">
+      <div class="trigger-card-icon">💰</div>
+      <div class="trigger-card-name">Pago conseguido</div>
+      <div class="trigger-card-desc">Has pasado una prueba o recibido un pago</div>
+    </div>
+    <div class="trigger-card" onclick="selectTrigger(this, 'Factor externo')" id="tc4">
+      <div class="trigger-card-icon">🌊</div>
+      <div class="trigger-card-name">Factor externo</div>
+      <div class="trigger-card-desc">Algo fuera del trading te ha afectado emocionalmente</div>
+    </div>
+    <div class="trigger-card" onclick="selectTrigger(this, 'Racha ganadora')" id="tc5">
+      <div class="trigger-card-icon">🟢</div>
+      <div class="trigger-card-name">Racha ganadora</div>
+      <div class="trigger-card-desc">Semanas muy buenas que generan sobreconfianza</div>
+    </div>
+    <div class="trigger-card" onclick="selectTrigger(this, 'Otro')" id="tc6">
+      <div class="trigger-card-icon">⚡</div>
+      <div class="trigger-card-name">Otro</div>
+      <div class="trigger-card-desc">Describe el evento abajo</div>
+    </div>
+  </div>
+  <input class="trigger-custom" id="triggerCustom" placeholder="Describe el evento en una frase..." oninput="autoSave()">
+</div>
+
+<!-- STEPS -->
+<div class="steps-wrap" id="stepsWrap">
+
+  <!-- STEP 1: REINICIO -->
+  <div class="step-card s1" id="step1">
+    <div class="step-header" onclick="toggleStep('step1')">
+      <div class="step-num">01</div>
+      <div class="step-meta">
+        <div class="step-title">Reinicio — Para antes de analizar</div>
+        <div class="step-sub">No puedes revisar nada con el sistema nervioso activado. Primero bajas la emocionalidad.</div>
+      </div>
+      <div class="step-status" id="st1"></div>
+    </div>
+    <div class="step-body" id="sb1">
+      <div class="step-questions">
+
+        <div class="sq">
+          <div class="sq-label">El estado actual</div>
+          <div class="sq-q">¿Cómo estás ahora mismo? Sé honesto.</div>
+          <div class="sq-hint">No lo que deberías sentir. Lo que sientes de verdad.</div>
+          <div class="sq-options">
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>Activado, con rabia o frustración</div>
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>Eufórico, sobreconfiado</div>
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>Ansioso, con miedo a lo que viene</div>
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>Apagado, sin motivación</div>
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>Relativamente bien pero noto algo</div>
+          </div>
+        </div>
+
+        <div class="sq">
+          <div class="sq-label">El reinicio</div>
+          <div class="sq-q">¿Cuánto tiempo vas a parar de operar?</div>
+          <div class="sq-hint">No es castigo. Es necesario para que el siguiente paso funcione. Sé realista.</div>
+          <div class="sq-options">
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>1 día</div>
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>2-3 días</div>
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>1 semana</div>
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>Más de una semana</div>
+          </div>
+        </div>
+
+        <div class="sq">
+          <div class="sq-label">La acción de reinicio</div>
+          <div class="sq-q">¿Qué vas a hacer durante ese tiempo para bajar la emocionalidad?</div>
+          <div class="sq-hint">Tiene que ser algo concreto. "Descansar" no cuenta. Algo físico, algo que te saque del modo trading.</div>
+          <textarea class="sq-textarea" id="r_accion" placeholder="Ej: me voy al gimnasio estos dos días, salgo a correr por la mañana, me voy un día a la playa..." oninput="autoSave(); checkStep1()"></textarea>
+        </div>
+
+        <div class="sq">
+          <div class="sq-label">El compromiso</div>
+          <div class="sq-q">¿Qué señal física o mental te indicará que ya estás listo para pasar al siguiente paso?</div>
+          <div class="sq-hint">Cuando sientas eso — y solo entonces — pasas a revisar. No antes.</div>
+          <textarea class="sq-textarea" id="r_senal" placeholder="Ej: cuando pueda pensar en lo que pasó sin que me active, cuando vuelva a sentir que quiero operar por proceso y no por recuperar..." oninput="autoSave(); checkStep1()"></textarea>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="step-divider">↓ Cuando hayas completado el reinicio, continúa</div>
+
+  <!-- STEP 2: REVISIÓN -->
+  <div class="step-card s2" id="step2">
+    <div class="step-header" onclick="toggleStep('step2')">
+      <div class="step-num">02</div>
+      <div class="step-meta">
+        <div class="step-title">Revisión — Qué pasó de verdad</div>
+        <div class="step-sub">Ahora sí. Desde la calma, sin sesgos, sin castigarte.</div>
+      </div>
+      <div class="step-status" id="st2"></div>
+    </div>
+    <div class="step-body" id="sb2">
+      <div class="step-questions">
+
+        <div class="sq">
+          <div class="sq-label">Lo que salió bien</div>
+          <div class="sq-q">¿Qué hiciste bien antes o durante el evento? Aunque sea poco.</div>
+          <div class="sq-hint">Empieza por aquí. Siempre hay algo. Si solo ves lo malo, la revisión no sirve de nada.</div>
+          <textarea class="sq-textarea" id="rev_bien" placeholder="Ej: seguí el plan los primeros días, paré cuando debía, el análisis estaba bien pero la gestión falló..." oninput="autoSave(); checkStep2()"></textarea>
+        </div>
+
+        <div class="sq">
+          <div class="sq-label">Lo que falló</div>
+          <div class="sq-q">¿Qué salió mal? Sin excusas, sin culpar al mercado.</div>
+          <div class="sq-hint">Solo lo que depende de ti. El mercado hace lo que hace. ¿Qué hiciste tú que no deberías haber hecho?</div>
+          <textarea class="sq-textarea" id="rev_mal" placeholder="Ej: sobreopere después de dos pérdidas seguidas, aumenté el riesgo sin criterio, no paré cuando llegué al límite diario..." oninput="autoSave(); checkStep2()"></textarea>
+        </div>
+
+        <div class="sq">
+          <div class="sq-label">El patrón</div>
+          <div class="sq-q">¿Esto ha pasado antes? ¿Es la primera vez o ves un patrón que se repite?</div>
+          <div class="sq-hint">Si es la tercera vez que ocurre lo mismo, ya no es mala suerte. Es algo a trabajar.</div>
+          <div class="sq-options">
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>Primera vez que me pasa algo así</div>
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>Lo he visto antes pero no tan fuerte</div>
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>Es un patrón claro que se repite</div>
+          </div>
+        </div>
+
+        <div class="sq">
+          <div class="sq-label">La causa raíz</div>
+          <div class="sq-q">¿Cuál fue la causa real? No el síntoma — la causa.</div>
+          <div class="sq-hint">El síntoma es "perdí la cuenta". La causa puede ser "entré con expectativas demasiado altas después de un pago". Ve a la raíz.</div>
+          <textarea class="sq-textarea" id="rev_causa" placeholder="Ej: las expectativas subieron demasiado después de pasarla, me creí que ya lo tenía controlado y bajé la guardia..." oninput="autoSave(); checkStep2()"></textarea>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="step-divider">↓ Solo si es necesario</div>
+
+  <!-- STEP 3: RECALIBRACIÓN -->
+  <div class="step-card s3" id="step3">
+    <div class="step-header" onclick="toggleStep('step3')">
+      <div class="step-num">03</div>
+      <div class="step-meta">
+        <div class="step-title">Recalibración — Qué ajustas (si hace falta)</div>
+        <div class="step-sub">No siempre es necesario cambiar algo. A veces la revisión confirma que el proceso es correcto y el evento fue puntual.</div>
+      </div>
+      <div class="step-status" id="st3"></div>
+    </div>
+    <div class="step-body" id="sb3">
+      <div class="step-questions">
+
+        <div class="sq">
+          <div class="sq-label">¿Hace falta recalibrar?</div>
+          <div class="sq-q">Después de la revisión, ¿hay algo concreto que necesita cambiar?</div>
+          <div class="sq-options">
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>Sí — el proceso tiene un fallo claro que hay que corregir</div>
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>Parcialmente — hay algo puntual que ajustar</div>
+            <div class="sq-option" onclick="toggleOpt(this)"><div class="opt-dot"></div>No — el proceso está bien, fue un evento puntual</div>
+          </div>
+        </div>
+
+        <div class="sq">
+          <div class="sq-label">El ajuste concreto</div>
+          <div class="sq-q">Si hay algo que cambiar, ¿qué es exactamente y cómo lo vas a hacer diferente?</div>
+          <div class="sq-hint">Sé muy específico. "Voy a ser más disciplinado" no vale. "Cuando consiga un pago, voy a bajar el riesgo al 0.5% los siguientes 5 días" sí vale.</div>
+          <textarea class="sq-textarea" id="rec_ajuste" placeholder="Ej: cuando consiga un pago, pararé un día automáticamente y bajaré el riesgo al 0.5% la semana siguiente..." oninput="autoSave(); checkStep3()"></textarea>
+        </div>
+
+        <div class="sq">
+          <div class="sq-label">La regla nueva</div>
+          <div class="sq-q">¿Cómo conviertes ese ajuste en una regla no negociable de tu sistema?</div>
+          <div class="sq-hint">Si no lo escribes como regla, lo olvidarás cuando vuelva a ocurrir. Escríbelo como "si pasa X, hago Y."</div>
+          <textarea class="sq-textarea" id="rec_regla" placeholder="Si/cuando [trigger]... haré [acción concreta] durante [tiempo]." oninput="autoSave(); checkStep3()"></textarea>
+        </div>
+
+        <div class="sq">
+          <div class="sq-label">Vuelta al proceso</div>
+          <div class="sq-q">¿Cuándo y cómo vuelves a operar?</div>
+          <div class="sq-hint">Define el primer día de vuelta, con qué riesgo y con qué mentalidad. No te lances sin una intención clara.</div>
+          <textarea class="sq-textarea" id="rec_vuelta" placeholder="Ej: vuelvo el lunes con riesgo al 0.5%, un trade máximo al día, sin presión de recuperar nada..." oninput="autoSave(); checkStep3()"></textarea>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SUMMARY -->
+<div class="summary" id="summary">
+  <div class="summary-header">
+    <div class="summary-title">Protocolo completado</div>
+    <div class="summary-sub">Guárdalo. Vuelve a leerlo antes de volver a operar. Esto es tu mapa de salida de este momento.</div>
+  </div>
+  <div class="summary-blocks" id="summaryBlocks"></div>
+  <div class="summary-actions">
+    <button class="btn btn-primary" onclick="downloadPDF()">Descargar PDF</button>
+    <button class="btn btn-secondary" onclick="resetPatron()">Limpiar respuestas</button>
+  </div>
+</div>
+
+<!-- SAVE BAR -->
+<div class="save-bar">
+  <div class="save-info">
+    <strong id="saveInfoName">Protocolo 1</strong> · <span id="saveInfoSub">Guardado automáticamente</span>
+  </div>
+  <div class="save-actions">
+    <button class="save-btn secondary" onclick="downloadPDF()">PDF</button>
+    <button class="save-btn primary" id="saveBtn" onclick="manualSave()">Guardar</button>
+  </div>
+</div>
+
+<script>
+// ─── DATA KEYS ───
+const FIELDS = {
+  r_accion: 'r_accion', r_senal: 'r_senal',
+  rev_bien: 'rev_bien', rev_mal: 'rev_mal', rev_causa: 'rev_causa',
+  rec_ajuste: 'rec_ajuste', rec_regla: 'rec_regla', rec_vuelta: 'rec_vuelta',
+  triggerCustom: 'triggerCustom'
+};
+
+const FIELD_LABELS = {
+  r_accion: 'Acción de reinicio', r_senal: 'Señal para continuar',
+  rev_bien: 'Lo que salió bien', rev_mal: 'Lo que falló', rev_causa: 'Causa raíz',
+  rec_ajuste: 'El ajuste concreto', rec_regla: 'La regla nueva', rec_vuelta: 'Vuelta al proceso'
+};
+
+let currentPatron = 1;
+let patrones = {};
+
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('mc_proto_patrones');
+  patrones = saved ? JSON.parse(saved) : { 1: { name: 'Protocolo 1', trigger: '', triggerType: '', answers: {}, opts: {} } };
+  currentPatron = parseInt(localStorage.getItem('mc_proto_current') || '1');
+  if (!patrones[currentPatron]) currentPatron = parseInt(Object.keys(patrones)[0]);
+  renderTabs();
+  loadPatron(currentPatron);
+  toggleStep('step1');
+});
+
+function savePatrones() { localStorage.setItem('mc_proto_patrones', JSON.stringify(patrones)); }
+
+function loadPatron(id) {
+  currentPatron = id;
+  localStorage.setItem('mc_proto_current', id);
+  const p = patrones[id];
+  Object.keys(FIELDS).forEach(k => {
+    const el = document.getElementById(k);
+    if (el) el.value = p.answers[k] || '';
+  });
+  // Load trigger
+  document.querySelectorAll('.trigger-card').forEach(c => c.classList.remove('selected'));
+  if (p.triggerType) {
+    document.querySelectorAll('.trigger-card').forEach(c => {
+      if (c.dataset.val === p.triggerType) c.classList.add('selected');
+    });
+  }
+  // Load options
+  document.querySelectorAll('.sq-option').forEach(o => {
+    const key = o.closest('.sq')?.querySelector('textarea, .sq-options')?.id || o.textContent.trim();
+    o.classList.remove('sel');
+    o.querySelector('.opt-dot').style.background = '';
+    o.querySelector('.opt-dot').style.borderColor = '';
+  });
+  if (p.opts) {
+    Object.entries(p.opts).forEach(([sqIdx, vals]) => {
+      const sqs = document.querySelectorAll('.sq');
+      if (sqs[sqIdx]) {
+        const opts = sqs[sqIdx].querySelectorAll('.sq-option');
+        opts.forEach(o => {
+          if (vals.includes(o.textContent.trim())) {
+            o.classList.add('sel');
+            o.querySelector('.opt-dot').style.background = 'var(--accent)';
+            o.querySelector('.opt-dot').style.borderColor = 'var(--accent)';
+          }
+        });
+      }
+    });
+  }
+  document.getElementById('saveInfoName').textContent = p.name;
+  checkStep1(); checkStep2(); checkStep3();
+  renderTabs();
+}
+
+function saveCurrentAnswers() {
+  if (!patrones[currentPatron]) return;
+  const p = patrones[currentPatron];
+  Object.keys(FIELDS).forEach(k => {
+    const el = document.getElementById(k);
+    if (el) p.answers[k] = el.value;
+  });
+  // Save options
+  p.opts = {};
+  document.querySelectorAll('.sq').forEach((sq, idx) => {
+    const selected = [...sq.querySelectorAll('.sq-option.sel')].map(o => o.textContent.trim());
+    if (selected.length) p.opts[idx] = selected;
+  });
+  savePatrones();
+}
+
+function autoSave() { saveCurrentAnswers(); }
+
+function manualSave() {
+  saveCurrentAnswers();
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = '✓';
+  btn.classList.add('saved');
+  setTimeout(() => { btn.textContent = 'Guardar'; btn.classList.remove('saved'); }, 2000);
+}
+
+// ─── PATRONES ───
+function newPatron() {
+  const ids = Object.keys(patrones).map(Number);
+  const newId = Math.max(...ids) + 1;
+  const name = prompt('Nombre del protocolo (ej: "Pérdida de cuenta mayo"):') || `Protocolo ${newId}`;
+  patrones[newId] = { name, trigger: '', triggerType: '', answers: {}, opts: {} };
+  savePatrones();
+  renderTabs();
+  loadPatron(newId);
+}
+
+function deletePatron(id, e) {
+  e.stopPropagation();
+  if (Object.keys(patrones).length === 1) { alert('Necesitas al menos un protocolo.'); return; }
+  if (!confirm(`¿Borrar "${patrones[id].name}"?`)) return;
+  delete patrones[id];
+  savePatrones();
+  const remaining = Object.keys(patrones).map(Number);
+  renderTabs();
+  loadPatron(remaining[0]);
+}
+
+function renderTabs() {
+  const container = document.getElementById('patronTabs');
+  container.innerHTML = '';
+  Object.entries(patrones).forEach(([id, p]) => {
+    const numId = parseInt(id);
+    const tab = document.createElement('div');
+    tab.className = 'patron-tab' + (numId === currentPatron ? ' active' : '');
+    tab.innerHTML = `<span>${p.name}</span><span class="tab-delete" onclick="deletePatron(${numId}, event)" title="Borrar">✕</span>`;
+    tab.addEventListener('click', () => { saveCurrentAnswers(); loadPatron(numId); });
+    container.appendChild(tab);
+  });
+}
+
+// ─── TRIGGER ───
+function selectTrigger(el, val) {
+  document.querySelectorAll('.trigger-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  el.dataset.val = val;
+  if (!patrones[currentPatron]) return;
+  patrones[currentPatron].triggerType = val;
+  patrones[currentPatron].name = val;
+  document.getElementById('saveInfoName').textContent = val;
+  savePatrones();
+  renderTabs();
+}
+
+// ─── OPTIONS ───
+function toggleOpt(el) {
+  el.classList.toggle('sel');
+  const dot = el.querySelector('.opt-dot');
+  dot.style.background = el.classList.contains('sel') ? 'var(--accent)' : '';
+  dot.style.borderColor = el.classList.contains('sel') ? 'var(--accent)' : '';
+  autoSave();
+  checkStep1(); checkStep2(); checkStep3();
+}
+
+// ─── STEPS ───
+function toggleStep(id) {
+  const body = document.getElementById('sb' + id.replace('step',''));
+  const card = document.getElementById(id);
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.step-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'));
+  if (!isOpen) { body.classList.add('open'); card.classList.add('active'); }
+}
+
+function checkStep1() {
+  const a = document.getElementById('r_accion')?.value.trim();
+  const b = document.getElementById('r_senal')?.value.trim();
+  const done = (a && a.length > 10) && (b && b.length > 10);
+  const card = document.getElementById('step1');
+  const st = document.getElementById('st1');
+  if (done) { card.classList.add('done'); st.textContent = '✓'; }
+  else { card.classList.remove('done'); st.textContent = ''; }
+  checkAll();
+}
+
+function checkStep2() {
+  const a = document.getElementById('rev_bien')?.value.trim();
+  const b = document.getElementById('rev_mal')?.value.trim();
+  const c = document.getElementById('rev_causa')?.value.trim();
+  const done = (a && a.length > 10) && (b && b.length > 10) && (c && c.length > 10);
+  const card = document.getElementById('step2');
+  const st = document.getElementById('st2');
+  if (done) { card.classList.add('done'); st.textContent = '✓'; }
+  else { card.classList.remove('done'); st.textContent = ''; }
+  checkAll();
+}
+
+function checkStep3() {
+  const a = document.getElementById('rec_ajuste')?.value.trim();
+  const b = document.getElementById('rec_vuelta')?.value.trim();
+  const done = (a && a.length > 10) && (b && b.length > 10);
+  const card = document.getElementById('step3');
+  const st = document.getElementById('st3');
+  if (done) { card.classList.add('done'); st.textContent = '✓'; }
+  else { card.classList.remove('done'); st.textContent = ''; }
+  checkAll();
+}
+
+function checkAll() {
+  const s1 = document.getElementById('step1').classList.contains('done');
+  const s2 = document.getElementById('step2').classList.contains('done');
+  const s3 = document.getElementById('step3').classList.contains('done');
+  document.getElementById('saveInfoSub').textContent =
+    s1 && s2 && s3 ? '✓ Protocolo completo' : 'Guardado automáticamente';
+  if (s1 && s2 && s3) showSummary();
+}
+
+function showSummary() {
+  const summary = document.getElementById('summary');
+  const blocks = document.getElementById('summaryBlocks');
+  summary.classList.add('visible');
+  const p = patrones[currentPatron];
+  blocks.innerHTML = `
+    <div class="sum-block sb1">
+      <div class="sum-block-label">01 · Reinicio</div>
+      <div class="sum-item">Trigger</div>
+      <div class="sum-answer">${p.triggerType || document.getElementById('triggerCustom').value || '—'}</div>
+      <div class="sum-item">Acción de reinicio</div>
+      <div class="sum-answer">${document.getElementById('r_accion').value || '—'}</div>
+      <div class="sum-item">Señal para continuar</div>
+      <div class="sum-answer">${document.getElementById('r_senal').value || '—'}</div>
+    </div>
+    <div class="sum-block sb2">
+      <div class="sum-block-label">02 · Revisión</div>
+      <div class="sum-item">Lo que salió bien</div>
+      <div class="sum-answer">${document.getElementById('rev_bien').value || '—'}</div>
+      <div class="sum-item">Lo que falló</div>
+      <div class="sum-answer">${document.getElementById('rev_mal').value || '—'}</div>
+      <div class="sum-item">Causa raíz</div>
+      <div class="sum-answer">${document.getElementById('rev_causa').value || '—'}</div>
+    </div>
+    <div class="sum-block sb3">
+      <div class="sum-block-label">03 · Recalibración</div>
+      <div class="sum-item">El ajuste</div>
+      <div class="sum-answer">${document.getElementById('rec_ajuste').value || '—'}</div>
+      <div class="sum-item">La regla nueva</div>
+      <div class="sum-answer">${document.getElementById('rec_regla').value || '—'}</div>
+      <div class="sum-item">Vuelta al proceso</div>
+      <div class="sum-answer">${document.getElementById('rec_vuelta').value || '—'}</div>
+    </div>
+  `;
+}
+
+function downloadPDF() {
+  document.querySelectorAll('.step-body').forEach(b => b.classList.add('open'));
+  showSummary();
+  setTimeout(() => window.print(), 300);
+}
+
+function resetPatron() {
+  if (!confirm('¿Limpiar todas las respuestas de este protocolo?')) return;
+  patrones[currentPatron].answers = {};
+  patrones[currentPatron].opts = {};
+  patrones[currentPatron].triggerType = '';
+  savePatrones();
+  loadPatron(currentPatron);
+  document.getElementById('summary').classList.remove('visible');
+}
+
+document.querySelectorAll('.trigger-card').forEach((c, i) => {
+  c.dataset.val = c.querySelector('.trigger-card-name').textContent;
+});
+</script>
+</body>
+</html>

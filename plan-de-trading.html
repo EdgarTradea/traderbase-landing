@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Plan de Trading — NeuroTrading ICP</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06060a;
+  --surface:#0e0e16;
+  --surface2:#14141e;
+  --border:rgba(255,255,255,0.06);
+  --border-active:rgba(212,167,58,0.35);
+  --accent:#d4a73a;
+  --accent-dim:rgba(212,167,58,0.07);
+  --accent-mid:rgba(212,167,58,0.18);
+  --accent-glow:rgba(212,167,58,0.15);
+  --green:#2ecc8a;
+  --green-dim:rgba(46,204,138,0.07);
+  --green-mid:rgba(46,204,138,0.18);
+  --red:#e84040;
+  --red-dim:rgba(232,64,64,0.07);
+  --red-mid:rgba(232,64,64,0.18);
+  --blue:#60a5fa;
+  --blue-dim:rgba(96,165,250,0.07);
+  --blue-mid:rgba(96,165,250,0.18);
+  --text:#ede8df;
+  --text-mid:#b0a898;
+  --text-dim:#6e6860;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  padding-bottom:80px;
+}
+
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
+}
+
+/* HEADER */
+.header{
+  padding:48px 40px 32px;
+  max-width:820px;
+  margin:0 auto;
+  position:relative;
+  z-index:1;
+}
+.header-tag{
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.header-tag::before{content:'';width:24px;height:1px;background:var(--accent)}
+.header-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(38px,6vw,60px);
+  letter-spacing:0.04em;
+  line-height:0.95;
+  margin-bottom:20px;
+}
+.header-title .accent{color:var(--accent)}
+.header-desc{
+  font-size:14px;
+  color:var(--text-mid);
+  line-height:1.7;
+  max-width:520px;
+  border-left:2px solid var(--accent);
+  padding-left:16px;
+  font-style:italic;
+}
+
+/* CONTENT */
+.content-wrap{
+  max-width:820px;
+  margin:0 auto;
+  padding:0 40px 40px;
+  position:relative;
+  z-index:1;
+}
+
+/* SECTION TITLE */
+.section-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:11px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin:40px 0 12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* CARD */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:10px;
+  transition:border-color 0.3s;
+}
+.card:focus-within{
+  border-color:var(--border-active);
+  box-shadow:0 0 40px var(--accent-glow),0 4px 20px rgba(0,0,0,0.4);
+}
+.card-header{
+  padding:16px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  user-select:none;
+}
+.card-header-left{display:flex;align-items:center;gap:12px}
+.card-icon{
+  width:28px;height:28px;
+  border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;
+  flex-shrink:0;
+}
+.card-label{
+  font-size:13px;
+  font-weight:500;
+  color:var(--text);
+}
+.card-sublabel{font-size:11px;color:var(--text-dim);margin-top:2px}
+.card-chevron{
+  font-size:10px;
+  color:var(--text-dim);
+  transition:transform 0.25s;
+}
+.card.open .card-chevron{transform:rotate(180deg)}
+.card-body{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.card.open .card-body{max-height:2000px}
+.card-inner{padding:4px 20px 20px}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* FIELD */
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+.field-label{
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:6px;
+}
+.field-hint{
+  font-size:11px;
+  color:var(--text-dim);
+  font-style:italic;
+  margin-bottom:6px;
+  line-height:1.5;
+}
+
+input[type=text], input[type=time], input[type=number], textarea, select{
+  width:100%;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:10px 14px;
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+  line-height:1.6;
+  outline:none;
+  transition:border-color 0.2s;
+  -webkit-appearance:none;
+}
+input[type=text]:focus, input[type=time]:focus, input[type=number]:focus, textarea:focus, select:focus{
+  border-color:var(--accent-mid);
+}
+input::placeholder, textarea::placeholder{color:var(--text-dim);font-style:italic}
+textarea{resize:vertical;min-height:80px}
+
+/* SESSION ROW */
+.session-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr auto;
+  gap:8px;
+  align-items:end;
+  margin-bottom:8px;
+}
+.session-row .btn-remove{
+  padding:10px 12px;
+  background:var(--red-dim);
+  border:1px solid var(--red-mid);
+  border-radius:8px;
+  color:var(--red);
+  cursor:pointer;
+  font-size:12px;
+  font-family:'DM Sans',sans-serif;
+  white-space:nowrap;
+  transition:all 0.15s;
+}
+.session-row .btn-remove:hover{background:rgba(232,64,64,0.15)}
+
+/* MARKET ROW */
+.market-row{
+  display:grid;
+  grid-template-columns:120px 1fr auto;
+  gap:8px;
+  align-items:end;
+  margin-bottom:8px;
+}
+
+/* RISK TABLE */
+.risk-table{width:100%;border-collapse:collapse}
+.risk-table th{
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  text-align:left;
+  padding:8px 10px;
+  border-bottom:1px solid var(--border);
+}
+.risk-table td{padding:6px 4px}
+.risk-table tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+.risk-table input{font-size:12px;padding:7px 10px}
+
+/* NO TRADE LIST */
+.no-trade-list{display:flex;flex-direction:column;gap:6px}
+.no-trade-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  background:var(--red-dim);
+  border:1px solid var(--red-mid);
+  border-radius:8px;
+  font-size:13px;
+  color:var(--text);
+}
+.no-trade-item::before{
+  content:'✕';
+  color:var(--red);
+  font-size:11px;
+  font-weight:500;
+  flex-shrink:0;
+}
+.no-trade-item input{
+  background:transparent;
+  border:none;
+  padding:0;
+  color:var(--text);
+  font-size:13px;
+}
+.no-trade-item input:focus{border:none;outline:none}
+
+/* BEHAVIORAL GRID */
+.beh-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.beh-block{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px;
+}
+.beh-block-title{
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:10px;
+}
+.beh-list{display:flex;flex-direction:column;gap:6px}
+.beh-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.beh-item input{flex:1;font-size:12px;padding:7px 10px}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:16px 0}
+
+/* ADD BTN */
+.btn-add{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 14px;
+  background:var(--accent-dim);
+  border:1px dashed rgba(212,167,58,0.3);
+  border-radius:6px;
+  color:var(--accent);
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all 0.15s;
+  margin-top:4px;
+}
+.btn-add:hover{background:var(--accent-mid)}
+
+/* GUIDELINES TAG */
+.guide-row{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
+}
+.guide-row:last-child{border-bottom:none}
+.guide-tag{
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--accent);
+  background:var(--accent-dim);
+  border:1px solid rgba(212,167,58,0.2);
+  border-radius:4px;
+  padding:3px 8px;
+  white-space:nowrap;
+  flex-shrink:0;
+  margin-top:2px;
+}
+
+/* SAVE BAR */
+.save-bar{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:rgba(6,6,10,0.96);
+  backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);
+  padding:12px 40px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  z-index:100;
+}
+.save-info{font-size:12px;color:var(--text-dim)}
+.save-info strong{color:var(--text-mid)}
+.save-actions{display:flex;gap:8px}
+.save-btn{
+  padding:8px 20px;
+  border-radius:6px;
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  border:none;
+  transition:all 0.2s;
+}
+.save-btn.primary{background:var(--accent);color:#06060a}
+.save-btn.secondary{background:var(--surface2);color:var(--text-mid);border:1px solid var(--border)}
+.save-btn.saved{background:var(--green)!important;color:#06060a!important}
+
+/* COLOR VARIANTS FOR CARD ICONS */
+.icon-blue{background:var(--blue-dim);color:var(--blue)}
+.icon-accent{background:var(--accent-dim);color:var(--accent)}
+.icon-green{background:var(--green-dim);color:var(--green)}
+.icon-red{background:var(--red-dim);color:var(--red)}
+.icon-purple{background:var(--purple-dim,rgba(167,139,250,0.07));color:#a78bfa}
+
+@media(max-width:600px){
+  .header,.content-wrap{padding-left:18px;padding-right:18px}
+  .header{padding-top:32px}
+  .grid-2,.grid-3,.beh-grid{grid-template-columns:1fr}
+  .session-row{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
+  .market-row{grid-template-columns:1fr auto}
+  .risk-table{font-size:11px}
+  .save-bar{padding:10px 18px}
+}
+
+@media print{
+  .save-bar{display:none!important}
+  body{background:white;color:black}
+  .header{padding-top:24px!important}
+  .card-body{max-height:none!important}
+  .card{background:white;border-color:#ddd;break-inside:avoid}
+  input,textarea,select{background:#f5f5f5!important;color:black!important;border-color:#ccc!important}
+  .beh-block{background:#f9f9f9;border-color:#ddd}
+  .no-trade-item{background:#fff0f0;border-color:#ffcccc}
+  body::before{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag">Sistemas de Trading · Recurso</div>
+  <h1 class="header-title">Mi Plan de<br><span class="accent">Trading</span></h1>
+  <p class="header-desc">Tu sistema operativo como trader. Rellénalo una vez, revísalo cuando lo necesites. Todo lo que está aquí define cómo operas — no cuándo el mercado te lo pide, sino siempre.</p>
+</div>
+
+<div class="content-wrap">
+
+  <!-- 1. MERCADOS -->
+  <div class="section-title">Mercados y sesiones</div>
+
+  <div class="card open" id="card-markets">
+    <div class="card-header" onclick="toggleCard('card-markets')">
+      <div class="card-header-left">
+        <div class="card-icon icon-blue">◈</div>
+        <div>
+          <div class="card-label">Mercados que opero</div>
+          <div class="card-sublabel">Pares o instrumentos con los que trabajas</div>
+        </div>
+      </div>
+      <div class="card-chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div id="markets-list"></div>
+        <button class="btn-add" onclick="addMarket()">+ Añadir mercado</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-sessions">
+    <div class="card-header" onclick="toggleCard('card-sessions')">
+      <div class="card-header-left">
+        <div class="card-icon icon-blue">◷</div>
+        <div>
+          <div class="card-label">Horario de trading</div>
+          <div class="card-sublabel">Sesiones en las que estás activo</div>
+        </div>
+      </div>
+      <div class="card-chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div id="sessions-list"></div>
+        <button class="btn-add" onclick="addSession()">+ Añadir sesión</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. GESTIÓN DE RIESGO -->
+  <div class="section-title">Gestión de riesgo</div>
+
+  <div class="card" id="card-risk">
+    <div class="card-header" onclick="toggleCard('card-risk')">
+      <div class="card-header-left">
+        <div class="card-icon icon-accent">%</div>
+        <div>
+          <div class="card-label">Parámetros de riesgo por cuenta</div>
+          <div class="card-sublabel">Riesgo por operación, exposición máxima y límites</div>
+        </div>
+      </div>
+      <div class="card-chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div style="overflow-x:auto">
+          <table class="risk-table">
+            <thead>
+              <tr>
+                <th>Tipo de cuenta</th>
+                <th>Riesgo / op.</th>
+                <th>Riesgo / idea</th>
+                <th>Exposición máx.</th>
+                <th>Límite diario</th>
+                <th>Límite semanal</th>
+              </tr>
+            </thead>
+            <tbody id="risk-tbody">
+            </tbody>
+          </table>
+        </div>
+        <button class="btn-add" onclick="addRiskRow()" style="margin-top:12px">+ Añadir cuenta</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-limits">
+    <div class="card-header" onclick="toggleCard('card-limits')">
+      <div class="card-header-left">
+        <div class="card-icon icon-accent">⊘</div>
+        <div>
+          <div class="card-label">Límites de operativa</div>
+          <div class="card-sublabel">Máximos diarios de trades, pérdidas y ganancias</div>
+        </div>
+      </div>
+      <div class="card-chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="grid-3">
+          <div class="field">
+            <div class="field-label">Máx. trades / día</div>
+            <input type="number" id="max-trades" placeholder="3" min="1" oninput="save('max-trades',this.value)">
+          </div>
+          <div class="field">
+            <div class="field-label">Máx. pérdidas / día</div>
+            <input type="number" id="max-losses" placeholder="2" min="1" oninput="save('max-losses',this.value)">
+          </div>
+          <div class="field">
+            <div class="field-label">Máx. posiciones abiertas</div>
+            <input type="number" id="max-open" placeholder="2" min="1" oninput="save('max-open',this.value)">
+          </div>
+          <div class="field">
+            <div class="field-label">Máx. wins / día</div>
+            <input type="number" id="max-wins" placeholder="3" min="1" oninput="save('max-wins',this.value)">
+          </div>
+          <div class="field">
+            <div class="field-label">RRR mínimo</div>
+            <input type="text" id="min-rrr" placeholder="1:2" oninput="save('min-rrr',this.value)">
+          </div>
+          <div class="field">
+            <div class="field-label">Máx. riesgo total</div>
+            <input type="text" id="max-total-risk" placeholder="3%" oninput="save('max-total-risk',this.value)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. EJECUCIÓN -->
+  <div class="section-title">Ejecución y gestión de operaciones</div>
+
+  <div class="card" id="card-entry">
+    <div class="card-header" onclick="toggleCard('card-entry')">
+      <div class="card-header-left">
+        <div class="card-icon icon-green">→</div>
+        <div>
+          <div class="card-label">Entrada</div>
+          <div class="card-sublabel">Cómo y cuándo entras al mercado</div>
+        </div>
+      </div>
+      <div class="card-chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="field">
+          <div class="field-label">Modelo de entrada principal</div>
+          <div class="field-hint">Describe brevemente tu proceso de entrada estándar</div>
+          <textarea id="entry-main" placeholder="Ej: Busco estructura de mercado en H4, confirmo en 15m con FVG y entro en 1m..." oninput="save('entry-main',this.value)"></textarea>
+        </div>
+        <div class="field">
+          <div class="field-label">Escalado de posición</div>
+          <div class="field-hint">Cuándo y cómo añades a una posición ganadora</div>
+          <textarea id="entry-scale" placeholder="Ej: Solo escalo si hay confirmación en 5m después de tomar liquidez interna..." rows="2" oninput="save('entry-scale',this.value)"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-sl">
+    <div class="card-header" onclick="toggleCard('card-sl')">
+      <div class="card-header-left">
+        <div class="card-icon icon-red">✕</div>
+        <div>
+          <div class="card-label">Stop Loss</div>
+          <div class="card-sublabel">Reglas de colocación — inamovibles</div>
+        </div>
+      </div>
+      <div class="card-chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="field">
+          <div class="field-label">Dónde va el stop</div>
+          <textarea id="sl-placement" placeholder="Ej: Por encima/debajo del H/L que creó la BoS de la entrada..." rows="2" oninput="save('sl-placement',this.value)"></textarea>
+        </div>
+        <div class="field">
+          <div class="field-label">Reglas del stop — lo que no se hace nunca</div>
+          <textarea id="sl-rules" placeholder="Ej: No mover el stop una vez colocado. No aguantar sin stop. No cerrar manualmente antes de que salte..." rows="3" oninput="save('sl-rules',this.value)"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-tp">
+    <div class="card-header" onclick="toggleCard('card-tp')">
+      <div class="card-header-left">
+        <div class="card-icon icon-green">✓</div>
+        <div>
+          <div class="card-label">Take Profit y objetivos</div>
+          <div class="card-sublabel">Cómo y dónde cierras posiciones ganadoras</div>
+        </div>
+      </div>
+      <div class="card-chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="grid-2">
+          <div class="field">
+            <div class="field-label">TP1 — Entrada principal</div>
+            <textarea id="tp1" placeholder="Ej: Liquidez interna siguiente..." rows="2" oninput="save('tp1',this.value)"></textarea>
+          </div>
+          <div class="field">
+            <div class="field-label">TP2 — Escalado / objetivo final</div>
+            <textarea id="tp2" placeholder="Ej: Liquidez externa o swing high/low anterior..." rows="2" oninput="save('tp2',this.value)"></textarea>
+          </div>
+        </div>
+        <div class="field" style="margin-top:10px">
+          <div class="field-label">Otras reglas de cierre</div>
+          <textarea id="tp-other" placeholder="Ej: No parciales antes de TP1. No cerrar en BE salvo que el setup se invalide..." rows="2" oninput="save('tp-other',this.value)"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. PREPARACIÓN -->
+  <div class="section-title">Preparación mental y física</div>
+
+  <div class="card" id="card-prep">
+    <div class="card-header" onclick="toggleCard('card-prep')">
+      <div class="card-header-left">
+        <div class="card-icon icon-purple">◎</div>
+        <div>
+          <div class="card-label">Protocolo pre-sesión</div>
+          <div class="card-sublabel">Lo que haces antes de abrir los gráficos</div>
+        </div>
+      </div>
+      <div class="card-chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="field">
+          <div class="field-label">Análisis previo a la sesión</div>
+          <div class="field-hint">Cuándo lo haces y qué incluye</div>
+          <textarea id="prep-analysis" placeholder="Ej: 30 min antes reviso estructura en H4 y marco los niveles clave del día..." rows="2" oninput="save('prep-analysis',this.value)"></textarea>
+        </div>
+        <div class="field">
+          <div class="field-label">Protocolo de activación</div>
+          <div class="field-hint">Respiración, meditación, intención del día — lo que regula tu estado antes de operar</div>
+          <textarea id="prep-activation" placeholder="Ej: 5 min de box breathing antes de la sesión. Establezco mi intención del día..." rows="2" oninput="save('prep-activation',this.value)"></textarea>
+        </div>
+        <div class="field">
+          <div class="field-label">Afirmaciones / intención</div>
+          <div class="field-hint">Las frases que te anclan antes de entrar al mercado</div>
+          <div id="affirmations-list"></div>
+          <button class="btn-add" onclick="addAffirmation()" style="margin-top:6px">+ Añadir afirmación</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. NO OPERAR -->
+  <div class="section-title">Condiciones — no se opera</div>
+
+  <div class="card" id="card-notrade">
+    <div class="card-header" onclick="toggleCard('card-notrade')">
+      <div class="card-header-left">
+        <div class="card-icon icon-red">⊘</div>
+        <div>
+          <div class="card-label">No se opera bajo estas condiciones</div>
+          <div class="card-sublabel">Reglas no negociables de cuando salir o no entrar</div>
+        </div>
+      </div>
+      <div class="card-chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="no-trade-list" id="notrade-list"></div>
+        <button class="btn-add" onclick="addNoTrade()" style="margin-top:8px">+ Añadir condición</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. ESTRATEGIAS DE COMPORTAMIENTO -->
+  <div class="section-title">Estrategias de comportamiento</div>
+
+  <div class="card" id="card-behavior">
+    <div class="card-header" onclick="toggleCard('card-behavior')">
+      <div class="card-header-left">
+        <div class="card-icon icon-purple">◈</div>
+        <div>
+          <div class="card-label">Sistemas para mantener la disciplina</div>
+          <div class="card-sublabel">Accountability, corrección de errores y refuerzo</div>
+        </div>
+      </div>
+      <div class="card-chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="beh-grid">
+          <div class="beh-block">
+            <div class="beh-block-title">Planes de accountability</div>
+            <div class="beh-list" id="beh-accountability"></div>
+            <button class="btn-add" onclick="addBehItem('beh-accountability','acc')" style="margin-top:8px;font-size:11px;padding:5px 10px">+ Añadir</button>
+          </div>
+          <div class="beh-block">
+            <div class="beh-block-title">Proceso para corregir errores</div>
+            <div class="beh-list" id="beh-correction"></div>
+            <button class="btn-add" onclick="addBehItem('beh-correction','cor')" style="margin-top:8px;font-size:11px;padding:5px 10px">+ Añadir</button>
+          </div>
+          <div class="beh-block">
+            <div class="beh-block-title">Refuerzo — si ejecuto bien</div>
+            <div class="beh-list" id="beh-reward"></div>
+            <button class="btn-add" onclick="addBehItem('beh-reward','rew')" style="margin-top:8px;font-size:11px;padding:5px 10px">+ Añadir</button>
+          </div>
+          <div class="beh-block">
+            <div class="beh-block-title">Estrategias de rendimiento óptimo</div>
+            <div class="beh-list" id="beh-peak"></div>
+            <button class="btn-add" onclick="addBehItem('beh-peak','pea')" style="margin-top:8px;font-size:11px;padding:5px 10px">+ Añadir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. DIRECTRICES PROFESIONALES -->
+  <div class="section-title">Directrices de comportamiento profesional</div>
+
+  <div class="card" id="card-guidelines">
+    <div class="card-header" onclick="toggleCard('card-guidelines')">
+      <div class="card-header-left">
+        <div class="card-icon icon-accent">◆</div>
+        <div>
+          <div class="card-label">Mis principios como trader</div>
+          <div class="card-sublabel">Lo que define cómo te comportas — dentro y fuera del mercado</div>
+        </div>
+      </div>
+      <div class="card-chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="beh-grid">
+          <div class="beh-block">
+            <div class="beh-block-title">Responsabilidad financiera</div>
+            <div class="beh-list" id="guide-financial"></div>
+            <button class="btn-add" onclick="addBehItem('guide-financial','gfi')" style="margin-top:8px;font-size:11px;padding:5px 10px">+ Añadir</button>
+          </div>
+          <div class="beh-block">
+            <div class="beh-block-title">Gestión del riesgo</div>
+            <div class="beh-list" id="guide-risk"></div>
+            <button class="btn-add" onclick="addBehItem('guide-risk','gri')" style="margin-top:8px;font-size:11px;padding:5px 10px">+ Añadir</button>
+          </div>
+          <div class="beh-block">
+            <div class="beh-block-title">Disciplina emocional</div>
+            <div class="beh-list" id="guide-emotional"></div>
+            <button class="btn-add" onclick="addBehItem('guide-emotional','gem')" style="margin-top:8px;font-size:11px;padding:5px 10px">+ Añadir</button>
+          </div>
+          <div class="beh-block">
+            <div class="beh-block-title">Datos y revisiones</div>
+            <div class="beh-list" id="guide-data"></div>
+            <button class="btn-add" onclick="addBehItem('guide-data','gda')" style="margin-top:8px;font-size:11px;padding:5px 10px">+ Añadir</button>
+          </div>
+          <div class="beh-block">
+            <div class="beh-block-title">Conducta profesional</div>
+            <div class="beh-list" id="guide-conduct"></div>
+            <button class="btn-add" onclick="addBehItem('guide-conduct','gco')" style="margin-top:8px;font-size:11px;padding:5px 10px">+ Añadir</button>
+          </div>
+          <div class="beh-block">
+            <div class="beh-block-title">Vida y equilibrio</div>
+            <div class="beh-list" id="guide-life"></div>
+            <button class="btn-add" onclick="addBehItem('guide-life','gli')" style="margin-top:8px;font-size:11px;padding:5px 10px">+ Añadir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SAVE BAR -->
+<div class="save-bar">
+  <div class="save-info">
+    <strong>Plan de Trading</strong> · <span id="save-status">Guardado automáticamente</span>
+  </div>
+  <div class="save-actions">
+    <button class="save-btn secondary" onclick="downloadPDF()">Exportar PDF</button>
+    <button class="save-btn primary" id="saveBtn" onclick="manualSave()">Guardar</button>
+  </div>
+</div>
+
+<script>
+// ─── TOGGLE CARDS ────────────────────────────────────────────────
+function toggleCard(id){
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+// ─── SAVE / LOAD ─────────────────────────────────────────────────
+function save(key, value){
+  localStorage.setItem('mc_plan_' + key, value);
+  showSaved();
+}
+function load(key){ return localStorage.getItem('mc_plan_' + key) || ''; }
+
+function showSaved(){
+  const btn = document.getElementById('saveBtn');
+  const status = document.getElementById('save-status');
+  btn.classList.add('saved');
+  btn.textContent = 'Guardado';
+  status.textContent = 'Guardado · ' + new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  clearTimeout(window._saveTimeout);
+  window._saveTimeout = setTimeout(()=>{
+    btn.classList.remove('saved');
+    btn.textContent = 'Guardar';
+  }, 2000);
+}
+
+function manualSave(){
+  // Guarda todos los inputs
+  document.querySelectorAll('input[id], textarea[id]').forEach(el=>{
+    save(el.id, el.value);
+  });
+  showSaved();
+}
+
+// ─── MARKETS ─────────────────────────────────────────────────────
+let markets = [];
+
+function renderMarkets(){
+  const list = document.getElementById('markets-list');
+  list.innerHTML = markets.map((m,i)=>`
+    <div class="market-row">
+      <input type="text" placeholder="EURUSD" value="${m.symbol}" oninput="markets[${i}].symbol=this.value;saveMarkets()" />
+      <input type="text" placeholder="Notas / parámetros" value="${m.notes}" oninput="markets[${i}].notes=this.value;saveMarkets()" />
+      <button class="btn-remove" onclick="removeMarket(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function addMarket(){
+  markets.push({symbol:'',notes:''});
+  renderMarkets();
+  saveMarkets();
+}
+
+function removeMarket(i){
+  markets.splice(i,1);
+  renderMarkets();
+  saveMarkets();
+}
+
+function saveMarkets(){
+  localStorage.setItem('mc_plan_markets', JSON.stringify(markets));
+  showSaved();
+}
+
+// ─── SESSIONS ─────────────────────────────────────────────────────
+let sessions = [];
+
+function renderSessions(){
+  const list = document.getElementById('sessions-list');
+  list.innerHTML = sessions.map((s,i)=>`
+    <div class="session-row">
+      <div class="field" style="margin:0">
+        <div class="field-label">Inicio</div>
+        <input type="time" value="${s.start}" oninput="sessions[${i}].start=this.value;saveSessions()" />
+      </div>
+      <div class="field" style="margin:0">
+        <div class="field-label">Fin</div>
+        <input type="time" value="${s.end}" oninput="sessions[${i}].end=this.value;saveSessions()" />
+      </div>
+      <div class="field" style="margin:0">
+        <div class="field-label">Nombre</div>
+        <input type="text" placeholder="Ej: Londres" value="${s.name}" oninput="sessions[${i}].name=this.value;saveSessions()" />
+      </div>
+      <button class="btn-remove" onclick="removeSession(${i})" style="margin-top:18px">✕</button>
+    </div>
+  `).join('');
+}
+
+function addSession(){
+  sessions.push({start:'',end:'',name:''});
+  renderSessions();
+  saveSessions();
+}
+
+function removeSession(i){
+  sessions.splice(i,1);
+  renderSessions();
+  saveSessions();
+}
+
+function saveSessions(){
+  localStorage.setItem('mc_plan_sessions', JSON.stringify(sessions));
+  showSaved();
+}
+
+// ─── RISK TABLE ───────────────────────────────────────────────────
+let riskRows = [];
+
+function renderRisk(){
+  const tbody = document.getElementById('risk-tbody');
+  tbody.innerHTML = riskRows.map((r,i)=>`
+    <tr>
+      <td><input type="text" placeholder="Live / Fondeo..." value="${r.type}" oninput="riskRows[${i}].type=this.value;saveRisk()" /></td>
+      <td><input type="text" placeholder="0.5%" value="${r.perTrade}" oninput="riskRows[${i}].perTrade=this.value;saveRisk()" /></td>
+      <td><input type="text" placeholder="1%" value="${r.perIdea}" oninput="riskRows[${i}].perIdea=this.value;saveRisk()" /></td>
+      <td><input type="text" placeholder="2%" value="${r.maxExposure}" oninput="riskRows[${i}].maxExposure=this.value;saveRisk()" /></td>
+      <td><input type="text" placeholder="1%" value="${r.dailyLimit}" oninput="riskRows[${i}].dailyLimit=this.value;saveRisk()" /></td>
+      <td><input type="text" placeholder="3%" value="${r.weeklyLimit}" oninput="riskRows[${i}].weeklyLimit=this.value;saveRisk()" /></td>
+    </tr>
+  `).join('');
+}
+
+function addRiskRow(){
+  riskRows.push({type:'',perTrade:'',perIdea:'',maxExposure:'',dailyLimit:'',weeklyLimit:''});
+  renderRisk();
+  saveRisk();
+}
+
+function saveRisk(){
+  localStorage.setItem('mc_plan_risk', JSON.stringify(riskRows));
+  showSaved();
+}
+
+// ─── NO TRADE ─────────────────────────────────────────────────────
+let noTradeItems = [];
+
+function renderNoTrade(){
+  const list = document.getElementById('notrade-list');
+  list.innerHTML = noTradeItems.map((item,i)=>`
+    <div class="no-trade-item">
+      <input type="text" placeholder="Condición..." value="${item}" oninput="noTradeItems[${i}]=this.value;saveNoTrade()" style="border:none;background:transparent;padding:0;flex:1" />
+      <button onclick="removeNoTrade(${i})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0 0 0 8px">✕</button>
+    </div>
+  `).join('');
+}
+
+function addNoTrade(){
+  noTradeItems.push('');
+  renderNoTrade();
+  saveNoTrade();
+}
+
+function removeNoTrade(i){
+  noTradeItems.splice(i,1);
+  renderNoTrade();
+  saveNoTrade();
+}
+
+function saveNoTrade(){
+  localStorage.setItem('mc_plan_notrade', JSON.stringify(noTradeItems));
+  showSaved();
+}
+
+// ─── AFFIRMATIONS ────────────────────────────────────────────────
+let affirmations = [];
+
+function renderAffirmations(){
+  const list = document.getElementById('affirmations-list');
+  list.innerHTML = affirmations.map((a,i)=>`
+    <div class="no-trade-item" style="background:var(--accent-dim);border-color:rgba(212,167,58,0.2);margin-bottom:6px">
+      <input type="text" placeholder="Escribe tu afirmación..." value="${a}" oninput="affirmations[${i}]=this.value;saveAffirmations()" style="border:none;background:transparent;padding:0;flex:1" />
+      <button onclick="removeAffirmation(${i})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;padding:0 0 0 8px">✕</button>
+    </div>
+  `).join('');
+}
+
+function addAffirmation(){
+  affirmations.push('');
+  renderAffirmations();
+  saveAffirmations();
+}
+
+function removeAffirmation(i){
+  affirmations.splice(i,1);
+  renderAffirmations();
+  saveAffirmations();
+}
+
+function saveAffirmations(){
+  localStorage.setItem('mc_plan_affirmations', JSON.stringify(affirmations));
+  showSaved();
+}
+
+// ─── BEHAVIORAL ITEMS ────────────────────────────────────────────
+const behData = {};
+
+function renderBehList(listId){
+  const items = behData[listId] || [];
+  const el = document.getElementById(listId);
+  if(!el) return;
+  el.innerHTML = items.map((item,i)=>`
+    <div class="beh-item">
+      <input type="text" placeholder="Añadir..." value="${item}" oninput="behData['${listId}'][${i}]=this.value;saveBeh('${listId}')" />
+      <button onclick="removeBehItem('${listId}',${i})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;padding:0 4px;flex-shrink:0">✕</button>
+    </div>
+  `).join('');
+}
+
+function addBehItem(listId){
+  if(!behData[listId]) behData[listId] = [];
+  behData[listId].push('');
+  renderBehList(listId);
+  saveBeh(listId);
+}
+
+function removeBehItem(listId, i){
+  behData[listId].splice(i,1);
+  renderBehList(listId);
+  saveBeh(listId);
+}
+
+function saveBeh(listId){
+  localStorage.setItem('mc_plan_beh_' + listId, JSON.stringify(behData[listId]));
+  showSaved();
+}
+
+// ─── PDF ─────────────────────────────────────────────────────────
+function downloadPDF(){
+  document.querySelectorAll('.card').forEach(c=>c.classList.add('open'));
+  setTimeout(()=>window.print(), 400);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────
+window.addEventListener('load', ()=>{
+
+  // Inputs simples
+  document.querySelectorAll('input[id], textarea[id]').forEach(el=>{
+    const val = load(el.id);
+    if(val) el.value = val;
+    el.addEventListener('input', ()=>save(el.id, el.value));
+  });
+
+  // Arrays
+  const savedMarkets = localStorage.getItem('mc_plan_markets');
+  markets = savedMarkets ? JSON.parse(savedMarkets) : [{symbol:'',notes:''}];
+  renderMarkets();
+
+  const savedSessions = localStorage.getItem('mc_plan_sessions');
+  sessions = savedSessions ? JSON.parse(savedSessions) : [{start:'09:00',end:'13:00',name:'Londres'},{start:'14:00',end:'17:00',name:'Nueva York'}];
+  renderSessions();
+
+  const savedRisk = localStorage.getItem('mc_plan_risk');
+  riskRows = savedRisk ? JSON.parse(savedRisk) : [{type:'',perTrade:'',perIdea:'',maxExposure:'',dailyLimit:'',weeklyLimit:''}];
+  renderRisk();
+
+  const savedNoTrade = localStorage.getItem('mc_plan_notrade');
+  noTradeItems = savedNoTrade ? JSON.parse(savedNoTrade) : ['',''];
+  renderNoTrade();
+
+  const savedAff = localStorage.getItem('mc_plan_affirmations');
+  affirmations = savedAff ? JSON.parse(savedAff) : [''];
+  renderAffirmations();
+
+  // Behavioral lists
+  const behLists = [
+    'beh-accountability','beh-correction','beh-reward','beh-peak',
+    'guide-financial','guide-risk','guide-emotional','guide-data','guide-conduct','guide-life'
+  ];
+  behLists.forEach(id=>{
+    const saved = localStorage.getItem('mc_plan_beh_' + id);
+    behData[id] = saved ? JSON.parse(saved) : [''];
+    renderBehList(id);
+  });
+
+  // Abrir primera card
+  document.getElementById('card-markets').classList.add('open');
+});
+</script>
+</body>
+</html>

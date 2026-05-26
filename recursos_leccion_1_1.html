@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recursos — Lección 1.1 Sistema Nervioso</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #09090f; --surface: #111118; --surface2: #18181f;
+  --border: rgba(255,255,255,0.07);
+  --red: #e84040; --red-dim: rgba(232,64,64,0.08); --red-mid: rgba(232,64,64,0.18);
+  --green: #2ecc8a; --green-dim: rgba(46,204,138,0.08); --green-mid: rgba(46,204,138,0.18);
+  --amber: #f5a623; --amber-dim: rgba(245,166,35,0.08); --amber-mid: rgba(245,166,35,0.2);
+  --purple: #a78bfa; --purple-dim: rgba(167,139,250,0.08); --purple-mid: rgba(167,139,250,0.2);
+  --text: #f0ece4; --text-dim: #5a5550; --text-mid: #9a9080;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;padding:36px 28px;max-width:860px;margin:0 auto;}
+
+/* HEADER */
+.page-tag{font-size:10px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:0.04em;line-height:1;margin-bottom:6px;}
+.page-title span{color:var(--red);}
+.page-sub{font-size:13px;color:var(--text-mid);margin-bottom:32px;line-height:1.5;}
+
+.section-label{font-size:10px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:14px;}
+
+/* ═══ VISUAL EXPLICATIVO ═══ */
+.visual-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:32px;}
+
+.vs-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:start;margin-bottom:20px;}
+
+.mode-card{border-radius:8px;padding:18px;}
+.mode-card.sim{background:var(--red-dim);border:1px solid var(--red-mid);}
+.mode-card.para{background:var(--green-dim);border:1px solid var(--green-mid);}
+
+.mode-tag{font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:4px;}
+.mode-card.sim .mode-tag{color:var(--red);}
+.mode-card.para .mode-tag{color:var(--green);}
+
+.mode-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.04em;margin-bottom:12px;}
+
+.mode-traits{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.mode-traits li{font-size:12px;color:var(--text-mid);display:flex;gap:8px;line-height:1.4;}
+.mode-card.sim  .mode-traits li::before{content:'↑';color:var(--red);flex-shrink:0;}
+.mode-card.para .mode-traits li::before{content:'✓';color:var(--green);flex-shrink:0;font-size:10px;margin-top:2px;}
+
+.vs-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding-top:24px;}
+.vs-badge{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text-dim);letter-spacing:0.06em;}
+.vs-note{font-size:10px;color:var(--text-dim);text-align:center;letter-spacing:0.06em;text-transform:uppercase;}
+
+/* trigger row */
+.trigger-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;}
+.trigger-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.trigger-icon{font-size:18px;margin-bottom:6px;}
+.trigger-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.trigger-desc{font-size:11px;color:var(--text-mid);line-height:1.5;}
+.trigger-card .badge{display:inline-block;font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;margin-top:6px;background:var(--red-dim);color:var(--red);}
+
+.key-insight{background:var(--amber-dim);border:1px solid var(--amber-mid);border-radius:8px;padding:14px 18px;margin-top:16px;display:flex;gap:12px;align-items:flex-start;}
+.insight-mark{font-size:16px;flex-shrink:0;}
+.insight-text{font-size:13px;color:var(--text-mid);line-height:1.6;}
+.insight-text strong{color:var(--amber);font-weight:500;}
+
+/* ═══ CUESTIONARIO ═══ */
+.quiz-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:32px;}
+.quiz-intro{font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.quiz-intro strong{color:var(--text);font-weight:500;}
+
+.question-block{margin-bottom:20px;}
+.q-num{font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);margin-bottom:6px;}
+.q-text{font-size:14px;color:var(--text);line-height:1.5;margin-bottom:10px;font-weight:500;}
+.q-hint{font-size:12px;color:var(--text-mid);font-style:italic;margin-bottom:10px;line-height:1.5;}
+
+.options{display:flex;flex-direction:column;gap:6px;}
+.option{display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:10px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);transition:border-color 0.15s,background 0.15s;}
+.option:hover{border-color:var(--purple);background:var(--purple-dim);}
+.option.selected{border-color:var(--purple);background:var(--purple-dim);}
+.option-letter{font-size:11px;font-weight:500;color:var(--purple);flex-shrink:0;width:16px;margin-top:1px;}
+.option-text{font-size:13px;color:var(--text-mid);line-height:1.4;}
+.option.selected .option-text{color:var(--text);}
+
+.open-q{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;min-height:70px;outline:none;transition:border-color 0.15s;}
+.open-q:focus{border-color:var(--purple);}
+.open-q::placeholder{color:var(--text-dim);}
+
+.q-divider{height:1px;background:var(--border);margin:20px 0;}
+
+/* reflection */
+.reflection{background:var(--purple-dim);border:1px solid var(--purple-mid);border-radius:8px;padding:16px 18px;margin-top:6px;}
+.reflection-label{font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);margin-bottom:6px;}
+.reflection-text{font-size:13px;color:var(--text-mid);line-height:1.6;}
+.reflection-text strong{color:var(--text);font-weight:500;}
+
+/* CTA */
+.cta-bar{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px;}
+.cta-text{font-size:13px;color:var(--text-mid);line-height:1.5;}
+.cta-text strong{color:var(--text);font-weight:500;display:block;margin-bottom:3px;}
+.cta-btn{background:var(--purple-dim);border:1px solid var(--purple-mid);color:var(--purple);font-size:12px;font-weight:500;padding:8px 18px;border-radius:5px;white-space:nowrap;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.cta-btn:hover{background:var(--purple-mid);}
+</style>
+</head>
+<body>
+
+<div class="page-tag">Módulo 1 · Psicología · Lección 1.1 · Recursos</div>
+<h1 class="page-title">Sistema nervioso —<br><span>entiéndelo en ti mismo</span></h1>
+<p class="page-sub">Dos recursos: un visual que resume los conceptos clave del video, y un cuestionario para que puedas reconocer estos patrones en tu propia experiencia.</p>
+
+<!-- ═══ RECURSO 1: VISUAL ═══ -->
+<div class="section-label">Recurso 1 — El mapa del sistema nervioso en trading</div>
+<div class="visual-wrap">
+
+  <div class="vs-grid">
+    <div class="mode-card sim">
+      <div class="mode-tag">Sistema Simpático</div>
+      <div class="mode-name">Modo amenaza</div>
+      <ul class="mode-traits">
+        <li>Cortisol y adrenalina disparados</li>
+        <li>Pensamiento estrecho — solo ves la posición</li>
+        <li>Modo lucha o huida activado</li>
+        <li>Incapaz de seguir el plan aunque lo tengas escrito</li>
+        <li>El cuerpo busca alivio — y el alivio suele ser el error</li>
+        <li>No distingue entre perder dinero y un tigre</li>
+      </ul>
+    </div>
+
+    <div class="vs-center">
+      <div class="vs-badge">VS</div>
+      <div class="vs-note">mismo<br>trader</div>
+    </div>
+
+    <div class="mode-card para">
+      <div class="mode-tag">Sistema Parasimpático</div>
+      <div class="mode-name">Modo regulado</div>
+      <ul class="mode-traits">
+        <li>Cortex prefrontal activo — decisiones racionales</li>
+        <li>Visión amplia — ves contexto, estructura, plan</li>
+        <li>Puedes ejecutar lo que has planificado</li>
+        <li>Pérdidas sin reacción desproporcionada</li>
+        <li>El análisis pre-sesión funciona desde aquí</li>
+        <li>Es donde entrenas. Es donde deberías operar.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-bottom:10px;">Qué activa el simpático mientras operas</div>
+  <div class="trigger-row">
+    <div class="trigger-card">
+      <div class="trigger-icon">📉</div>
+      <div class="trigger-title">Pérdidas recientes</div>
+      <div class="trigger-desc">Una o varias pérdidas seguidas. El cerebro interpreta amenaza. Las siguientes decisiones vienen contaminadas.</div>
+      <span class="badge">Más común</span>
+    </div>
+    <div class="trigger-card">
+      <div class="trigger-icon">📈</div>
+      <div class="trigger-title">Rachas positivas</div>
+      <div class="trigger-desc">La euforia también activa el sistema. Ganas sintiéndote invencible y tomas decisiones igual de malas que en pánico.</div>
+      <span class="badge">Infraestimado</span>
+    </div>
+    <div class="trigger-card">
+      <div class="trigger-icon">⏱</div>
+      <div class="trigger-title">Espera sin operar</div>
+      <div class="trigger-desc">Llevas horas mirando el gráfico. La tensión acumulada busca resolverse. Creas setups que no existen.</div>
+      <span class="badge">Silencioso</span>
+    </div>
+  </div>
+
+  <div class="key-insight">
+    <div class="insight-mark">◆</div>
+    <div class="insight-text">
+      <strong>La idea central de esta lección:</strong> el FOMO, el trading por venganza, mover el stop — no son el problema. Son el efecto. La causa está en el sistema nervioso. Si atacas el efecto con fuerza de voluntad, estás usando una herramienta que no está disponible cuando más la necesitas.
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ RECURSO 2: CUESTIONARIO ═══ -->
+<div class="section-label">Recurso 2 — Cuestionario de autoconocimiento</div>
+<div class="quiz-wrap">
+
+  <div class="quiz-intro">
+    Estas preguntas no tienen respuesta correcta. El objetivo es que <strong>reconozcas en tu propia experiencia</strong> lo que acaba de explicar el video. Tómate 10 minutos. Sé honesto. Nadie más va a leer esto.
+  </div>
+
+  <!-- Q1 -->
+  <div class="question-block">
+    <div class="q-num">Pregunta 01</div>
+    <div class="q-text">¿Cuándo sueles cometer más errores de ejecución?</div>
+    <div class="q-hint">Piensa en las últimas semanas. ¿Hay algún momento del día, de la semana, o alguna situación concreta en la que los errores se repiten más?</div>
+    <div class="options">
+      <div class="option" onclick="toggle(this)"><span class="option-letter">A</span><span class="option-text">Justo después de una pérdida — necesito recuperar</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">B</span><span class="option-text">Cuando llevo tiempo mirando el gráfico sin entrar</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">C</span><span class="option-text">Cuando estoy en racha positiva y me siento invencible</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">D</span><span class="option-text">En momentos de alta volatilidad o noticias importantes</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">E</span><span class="option-text">Cuando algo fuera del trading me tiene activado (estrés, discusión, mal sueño)</span></div>
+    </div>
+  </div>
+
+  <div class="q-divider"></div>
+
+  <!-- Q2 -->
+  <div class="question-block">
+    <div class="q-num">Pregunta 02</div>
+    <div class="q-text">¿Reconoces en tu cuerpo alguna señal física antes de cometer un error?</div>
+    <div class="q-hint">Antes de mover el stop, de sobreoperar, de cerrar antes de tiempo — ¿hay algo que sientes físicamente? Puede ser sutil.</div>
+    <div class="options">
+      <div class="option" onclick="toggle(this)"><span class="option-letter">A</span><span class="option-text">Tensión en el pecho o el estómago</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">B</span><span class="option-text">Respiración más corta o acelerada</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">C</span><span class="option-text">Las manos se mueven solas hacia el ratón</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">D</span><span class="option-text">Inquietud general, dificultad para quedarse quieto</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">E</span><span class="option-text">No noto nada físico — el error ocurre sin señal previa</span></div>
+    </div>
+  </div>
+
+  <div class="q-divider"></div>
+
+  <!-- Q3 -->
+  <div class="question-block">
+    <div class="q-num">Pregunta 03</div>
+    <div class="q-text">¿Cuál es el error de ejecución que más se repite en ti?</div>
+    <div class="q-hint">Elige el que más te identifica. Si tienes varios, elige el que más daño hace a tus resultados.</div>
+    <div class="options">
+      <div class="option" onclick="toggle(this)"><span class="option-letter">A</span><span class="option-text">Mover el stop loss para evitar que salte</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">B</span><span class="option-text">Cerrar en beneficio antes de que llegue al objetivo</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">C</span><span class="option-text">Entrar en operaciones fuera del plan o sin setup claro</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">D</span><span class="option-text">Sobreoperar — demasiadas operaciones en el mismo día</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">E</span><span class="option-text">Aumentar el riesgo para recuperar pérdidas anteriores</span></div>
+    </div>
+  </div>
+
+  <div class="q-divider"></div>
+
+  <!-- Q4 - abierta -->
+  <div class="question-block">
+    <div class="q-num">Pregunta 04</div>
+    <div class="q-text">Piensa en la última vez que cometiste ese error. ¿Qué estaba pasando antes de que ocurriera?</div>
+    <div class="q-hint">No el error en sí — lo que vino antes. ¿Cómo estabas ese día? ¿Hubo algún detonante? ¿Qué pensabas justo antes de hacer lo que hiciste?</div>
+    <textarea class="open-q" placeholder="Escribe aquí sin filtros. Cuanto más específico, más útil será para ti..."></textarea>
+  </div>
+
+  <div class="q-divider"></div>
+
+  <!-- Q5 -->
+  <div class="question-block">
+    <div class="q-num">Pregunta 05</div>
+    <div class="q-text">Cuando analizas el mercado antes de operar (pre-sesión), ¿cómo te sientes comparado con cuando estás con una posición abierta?</div>
+    <div class="options">
+      <div class="option" onclick="toggle(this)"><span class="option-letter">A</span><span class="option-text">Muy diferente — en pre-sesión estoy tranquilo, con posición abierta me activo mucho</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">B</span><span class="option-text">Algo diferente — noto más tensión con posición abierta pero puedo manejarlo</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">C</span><span class="option-text">Igual — me activo también durante el análisis</span></div>
+      <div class="option" onclick="toggle(this)"><span class="option-letter">D</span><span class="option-text">No lo he observado conscientemente hasta ahora</span></div>
+    </div>
+  </div>
+
+  <div class="q-divider"></div>
+
+  <!-- Q6 - abierta -->
+  <div class="question-block">
+    <div class="q-num">Pregunta 06 — La más importante</div>
+    <div class="q-text">¿Cuántas veces has intentado resolver este problema con fuerza de voluntad? ¿Qué pasó?</div>
+    <div class="q-hint">Piénsalo de verdad. ¿Te has dicho "la próxima vez no lo haré"? ¿Cuántas veces? ¿Qué cambió y qué no cambió?</div>
+    <textarea class="open-q" placeholder="Esta respuesta es para ti, no para nadie más. Sé honesto." style="min-height:90px;"></textarea>
+  </div>
+
+  <div class="reflection">
+    <div class="reflection-label">Para reflexionar después de completar el cuestionario</div>
+    <div class="reflection-text">
+      Si en la pregunta 06 tu respuesta es "muchas veces, y no cambió nada" — eso no es un fallo tuyo. Es la demostración exacta de lo que explica esta lección: <strong>no puedes resolver con voluntad algo que ocurre antes de que la voluntad esté disponible.</strong><br><br>
+      El trabajo que viene en las siguientes lecciones no va de intentarlo más fuerte. Va de construir un protocolo que funcione antes de que el sistema nervioso se active.
+    </div>
+  </div>
+
+</div>
+
+<!-- CTA -->
+<div class="cta-bar">
+  <div class="cta-text">
+    <strong>¿Algo no quedó claro o quieres compartir lo que has descubierto?</strong>
+    Lleva tus respuestas a la comunidad o escríbeme directamente. Las preguntas concretas — "me pasa esto, no sé qué significa" — son las más valiosas.
+  </div>
+  <button class="cta-btn">Ir a la comunidad →</button>
+</div>
+
+<script>
+function toggle(el) {
+  el.classList.toggle('selected');
+}
+</script>
+
+</body>
+</html>
