@@ -271,6 +271,19 @@ footer {
 .roadmap-section {
   padding: 0 40px 48px; max-width: 900px; margin: 0 auto;
 }
+.roadmap-split {
+  display: grid; grid-template-columns: 1fr 1px 1fr;
+  gap: 28px; margin-top: 32px; align-items: start;
+}
+.split-divider { background: var(--border); align-self: stretch; }
+.split-side { display: flex; flex-direction: column; gap: 6px; }
+.split-tag {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-3);
+}
+.split-tag.trader { color: var(--gold); }
+.split-title { font-size: 16px; font-weight: 500; line-height: 1.3; }
+.split-desc { font-size: 13px; font-weight: 300; color: var(--text-2); line-height: 1.65; margin-top: 2px; }
 .roadmap-intro {
   font-size: 14px; color: var(--text-3); margin-bottom: 40px;
   font-family: 'Geist Mono', monospace;
@@ -444,6 +457,20 @@ footer {
     <div class="rnode rnode-final" style="--d:1.25s">
       <div class="rnode-circle">★</div>
       <div class="rnode-label"><strong>Trader</strong><span>Consistente</span></div>
+    </div>
+  </div>
+
+  <div class="roadmap-split">
+    <div class="split-side">
+      <span class="split-tag">analista</span>
+      <p class="split-title">Sabe leer el mercado.<br>No lo puede ejecutar.</p>
+      <p class="split-desc">Conoce la estrategia, identifica setups, entiende la teoría. Pero cuando aprieta el botón, algo falla.</p>
+    </div>
+    <div class="split-divider"></div>
+    <div class="split-side">
+      <span class="split-tag trader">trader</span>
+      <p class="split-title">Sabe leer el mercado.<br>Y también lo ejecuta.</p>
+      <p class="split-desc">Tiene además el sistema nervioso regulado, protocolos de reinicio, proceso operativo y revisiones con datos reales.</p>
     </div>
   </div>
 </div>
