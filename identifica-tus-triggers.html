@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Identifica tus Triggers — Método Consistente</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06060a;
+    --surface: #0e0e16;
+    --surface2: #14141e;
+    --border: rgba(255,255,255,0.06);
+    --border-active: rgba(212,167,58,0.35);
+    --accent: #d4a73a;
+    --accent-dim: rgba(212,167,58,0.07);
+    --accent-mid: rgba(212,167,58,0.18);
+    --accent-glow: rgba(212,167,58,0.15);
+    --green: #2ecc8a;
+    --green-dim: rgba(46,204,138,0.07);
+    --green-mid: rgba(46,204,138,0.18);
+    --red: #e84040;
+    --red-dim: rgba(232,64,64,0.07);
+    --red-mid: rgba(232,64,64,0.18);
+    --blue: #60a5fa;
+    --blue-dim: rgba(96,165,250,0.07);
+    --blue-mid: rgba(96,165,250,0.18);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.07);
+    --purple-mid: rgba(167,139,250,0.18);
+    --amber: #f5a623;
+    --amber-dim: rgba(245,166,35,0.07);
+    --amber-mid: rgba(245,166,35,0.18);
+    --text: #ede8df;
+    --text-mid: #8a8278;
+    --text-dim: #4a4540;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Header */
+  .header {
+    padding: 48px 40px 32px;
+    max-width: 780px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .header-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-tag::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(38px, 6vw, 60px);
+    letter-spacing: 0.04em;
+    line-height: 0.95;
+    margin-bottom: 20px;
+  }
+  .header-title .accent { color: var(--accent); }
+  .header-desc {
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.7;
+    max-width: 520px;
+    border-left: 2px solid var(--accent);
+    padding-left: 16px;
+    font-style: italic;
+  }
+
+  /* Content */
+  .content-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 40px 40px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Secuencia visual */
+  .sequence-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .seq-step {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-mid);
+  }
+  .seq-step.highlight {
+    border-color: var(--accent-mid);
+    background: var(--accent-dim);
+    color: var(--accent);
+  }
+  .seq-arrow {
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 0 4px;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.05em;
+  }
+  .card-icon.blue { background: var(--blue-dim); border: 1px solid var(--blue-mid); color: var(--blue); }
+  .card-icon.purple { background: var(--purple-dim); border: 1px solid var(--purple-mid); color: var(--purple); }
+  .card-icon.amber { background: var(--amber-dim); border: 1px solid var(--amber-mid); color: var(--amber); }
+  .card-icon.accent { background: var(--accent-dim); border: 1px solid var(--accent-mid); color: var(--accent); }
+
+  .card-title-block {}
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .card-subtitle {
+    font-size: 12px;
+    color: var(--text-mid);
+    font-style: italic;
+  }
+  .card-body { padding: 20px 24px 24px; }
+
+  /* Intro block */
+  .intro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .intro-text {
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+  .intro-text strong { color: var(--text); font-weight: 500; }
+
+  /* Trigger options grid */
+  .triggers-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .trigger-opt {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    cursor: pointer;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    transition: all 0.15s;
+    font-size: 13px;
+    color: var(--text-mid);
+    user-select: none;
+  }
+  .trigger-opt:hover { border-color: rgba(255,255,255,0.12); color: var(--text); }
+  .trigger-opt.sel { border-color: var(--accent-mid); background: var(--accent-dim); color: var(--text); }
+  .trigger-opt.sel.blue-sel { border-color: var(--blue-mid); background: var(--blue-dim); }
+  .trigger-opt.sel.purple-sel { border-color: var(--purple-mid); background: var(--purple-dim); }
+  .opt-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.15s;
+  }
+  .trigger-opt.sel .opt-dot { background: var(--accent); border-color: var(--accent); }
+  .trigger-opt.sel.blue-sel .opt-dot { background: var(--blue); border-color: var(--blue); }
+  .trigger-opt.sel.purple-sel .opt-dot { background: var(--purple); border-color: var(--purple); }
+
+  /* Section label */
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .section-label.accent { color: var(--accent); }
+  .section-label.blue { color: var(--blue); }
+  .section-label.purple { color: var(--purple); }
+
+  /* Textarea */
+  .textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .textarea:focus { border-color: var(--accent-mid); }
+  .textarea::placeholder { color: var(--text-dim); font-style: italic; }
+
+  /* Reflection block */
+  .reflection-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+  }
+  .reflection-q {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .reflection-hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
+  /* Mapa card */
+  .mapa-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .mapa-field label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  /* Alerta info */
+  .alert {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .alert.amber {
+    background: var(--amber-dim);
+    border: 1px solid var(--amber-mid);
+    color: var(--text-mid);
+  }
+  .alert-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+  .alert.amber .alert-dot { background: var(--amber); }
+
+  /* Textarea row */
+  .q-block { margin-bottom: 16px; }
+  .q-block:last-child { margin-bottom: 0; }
+  .q-label {
+    font-size: 12px;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+  }
+
+  /* Save bar */
+  .save-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(6,6,10,0.96);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+  }
+  .save-info { font-size: 12px; color: var(--text-dim); }
+  .save-info strong { color: var(--text-mid); }
+  .save-actions { display: flex; gap: 8px; }
+  .save-btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .save-btn.primary { background: var(--accent); color: #06060a; }
+  .save-btn.primary:hover { background: #e0b840; }
+  .save-btn.secondary { background: var(--surface2); color: var(--text-mid); border: 1px solid var(--border); }
+  .save-btn.saved { background: var(--green) !important; color: #06060a !important; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .header, .content-wrap { padding-left: 18px; padding-right: 18px; }
+    .save-bar { padding: 10px 18px; }
+    .triggers-grid { grid-template-columns: 1fr; }
+    .mapa-row { grid-template-columns: 1fr; }
+  }
+
+  /* Print */
+  @media print {
+    .save-bar { display: none !important; }
+    body { background: white; color: black; padding-bottom: 0; }
+    body::before { display: none; }
+    .header { padding-top: 24px !important; }
+    .card, .intro-card, .reflection-block, .alert {
+      background: white !important;
+      border-color: #ddd !important;
+      break-inside: avoid;
+    }
+    .card-body, .card-header { background: white; }
+    .card-icon.blue, .card-icon.purple, .card-icon.amber, .card-icon.accent {
+      background: #f5f5f5 !important;
+      border-color: #ddd !important;
+      color: #333 !important;
+    }
+    .surface2, .trigger-opt { background: #f9f9f9 !important; color: #333 !important; }
+    .textarea { background: #f5f5f5; color: black; border-color: #ccc; }
+    .header-title, .card-title { color: black; }
+    .header-title .accent, .section-label.accent { color: #b8860b; }
+    .header-tag, .header-desc { color: #666; border-color: #b8860b; }
+    .intro-text, .card-subtitle, .reflection-hint, .q-label, .section-label { color: #555; }
+    .trigger-opt.sel { border-color: #999 !important; background: #f0f0f0 !important; color: #333 !important; }
+    .opt-dot { background: #999 !important; border-color: #999 !important; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card, .intro-card { animation: fadeUp 0.35s ease both; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag">Módulo 3 · Fisiología y Sistemas · Recurso</div>
+  <h1 class="header-title">Identifica tus<br><span class="accent">triggers</span></h1>
+  <p class="header-desc">Sin conocer tus triggers personales, es imposible interrumpir la secuencia antes de que llegue a la acción. Este ejercicio es el punto de partida.</p>
+</div>
+
+<div class="content-wrap">
+
+  <!-- Intro -->
+  <div class="intro-card">
+    <p class="intro-text">
+      Un <strong>trigger</strong> es cualquier estímulo — externo o interno — que activa tu sistema nervioso y pone en marcha la secuencia de 4 etapas. Cuanto antes en la secuencia lo identifiques, más fácil es parar.
+    </p>
+    <div class="sequence-row">
+      <div class="seq-step highlight">Trigger</div>
+      <div class="seq-arrow">›</div>
+      <div class="seq-step">Cuerpo</div>
+      <div class="seq-arrow">›</div>
+      <div class="seq-step">Mente</div>
+      <div class="seq-arrow">›</div>
+      <div class="seq-step">Accion</div>
+    </div>
+  </div>
+
+  <!-- Triggers externos -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon blue">EXT</div>
+      <div class="card-title-block">
+        <div class="card-title">Triggers externos</div>
+        <div class="card-subtitle">Vienen del entorno — fuera de ti</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="alert amber">
+        <div class="alert-dot"></div>
+        <span>Marca los que reconoces en tu experiencia como trader. Puedes marcar varios.</span>
+      </div>
+
+      <div class="section-label blue">Precio y mercado</div>
+      <div class="triggers-grid" id="ext-mercado">
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>El precio se mueve contra mi posicion justo al entrar</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>El precio llega cerca de mi stop loss</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>El precio se dispara sin que yo haya entrado</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>Veo un movimiento rapido e inesperado en el grafico</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>El mercado esta lento y sin estructura clara</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>Sale una noticia economica durante mi sesion</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-label blue">Entorno social</div>
+      <div class="triggers-grid" id="ext-social">
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>Veo que otros traders estan ganando en redes</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>Alguien comenta una operacion que yo no hice</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>Recibo una critica o comentario negativo</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>Veo el resultado de otros antes de mi sesion</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>Escucho una opinion contraria a mi analisis</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>Interrupciones durante la sesion (mensajes, ruido)</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-label blue">Resultados recientes</div>
+      <div class="triggers-grid">
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>Acabo de cerrar una operacion con perdida</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>Acabo de cerrar con ganancia y quiero mas</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>Llevo varios dias seguidos perdiendo</span></div>
+        <div class="trigger-opt blue-sel" onclick="toggleOpt(this,'ext')"><div class="opt-dot"></div><span>Tenia una operacion ganadora y se giro en mi contra</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="q-block">
+        <div class="section-label blue">Otros triggers externos que reconozco</div>
+        <textarea class="textarea" id="ext-otros" placeholder="Anota aqui cualquier otro estimulo externo que sabes que te activa..." rows="3"></textarea>
+      </div>
+
+      <div class="reflection-block">
+        <div class="reflection-q">De todos los que has marcado, ?cual es el que mas te desregula?</div>
+        <div class="reflection-hint">No el mas frecuente, sino el que produce una reaccion mas intensa.</div>
+        <textarea class="textarea" id="ext-principal" placeholder="El trigger externo que mas me afecta es..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Triggers internos -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon purple">INT</div>
+      <div class="card-title-block">
+        <div class="card-title">Triggers internos</div>
+        <div class="card-subtitle">Vienen de tu estado fisico y emocional</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="alert amber">
+        <div class="alert-dot"></div>
+        <span>Estos son los mas dificiles de detectar porque los normalizamos. Son tan habituales que dejan de parecer relevantes.</span>
+      </div>
+
+      <div class="section-label purple">Estado fisico</div>
+      <div class="triggers-grid">
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Hambre o no haber comido bien antes de operar</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Cansancio o pocos horas de sueno</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Tension fisica acumulada (mandibula, hombros, pecho)</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>No haber hecho ejercicio fisico ese dia</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Exceso de cafeina o estimulantes</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Malestar fisico general o enfermedad</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-label purple">Estado emocional previo</div>
+      <div class="triggers-grid">
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Empiezo la sesion con ansiedad o nervios</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Llego frustrado de algo que no tiene que ver con el trading</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Tengo presion economica en ese momento</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Estoy aburrido o infraestimulado durante la sesion</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Me siento culpable por operaciones anteriores</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Tengo miedo de perder la cuenta o el capital</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-label purple">Mentalidad y expectativas</div>
+      <div class="triggers-grid">
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Necesito recuperar lo que perdi ayer</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Hoy tengo que ganar si o si</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Siento que me merezco ganar despues de tanto trabajo</span></div>
+        <div class="trigger-opt purple-sel" onclick="toggleOpt(this,'int')"><div class="opt-dot"></div><span>Noto que el mercado "me debe" una operacion buena</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="q-block">
+        <div class="section-label purple">Otros triggers internos que reconozco</div>
+        <textarea class="textarea" id="int-otros" placeholder="Anota aqui cualquier otro estado interno que sabes que te desregula..." rows="3"></textarea>
+      </div>
+
+      <div class="reflection-block">
+        <div class="reflection-q">De todos los que has marcado, ?cual aparece con mas frecuencia antes de tus errores?</div>
+        <div class="reflection-hint">Piensa en tus ultimas 5 operaciones que salieron mal. ?Que estado interno tenias?</div>
+        <textarea class="textarea" id="int-principal" placeholder="El trigger interno mas frecuente antes de mis errores es..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mapa personal -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon accent">MAP</div>
+      <div class="card-title-block">
+        <div class="card-title">Mi mapa personal de triggers</div>
+        <div class="card-subtitle">Sintetiza lo que has descubierto en este ejercicio</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p style="font-size:13px; color:var(--text-mid); margin-bottom:20px; line-height:1.7;">
+        El objetivo no es eliminar los triggers — es conocerlos antes de que actuen. Con este mapa sabes exactamente que buscar antes y durante tu sesion.
+      </p>
+
+      <div class="section-label accent">Mis 3 triggers mas peligrosos</div>
+      <div class="q-block">
+        <div class="q-label">Trigger 1 (el mas intenso)</div>
+        <textarea class="textarea" id="mapa-t1" placeholder="Cuando ocurre esto..." rows="2"></textarea>
+      </div>
+      <div class="q-block">
+        <div class="q-label">Trigger 2 (el mas frecuente)</div>
+        <textarea class="textarea" id="mapa-t2" placeholder="Cuando estoy en este estado..." rows="2"></textarea>
+      </div>
+      <div class="q-block">
+        <div class="q-label">Trigger 3</div>
+        <textarea class="textarea" id="mapa-t3" placeholder="Cuando sucede esto..." rows="2"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-label accent">La senial de aviso en mi cuerpo</div>
+      <div class="q-block">
+        <div class="q-label">Cuando me activo, lo primero que noto en mi cuerpo es...</div>
+        <div class="reflection-hint" style="margin-bottom:8px;">Tension en el pecho, respiracion cortada, calor, mandibula apretada, ritmo cardiaco...</div>
+        <textarea class="textarea" id="mapa-cuerpo" placeholder="La primera senial fisica que aparece es..." rows="3"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-label accent">Mi compromiso</div>
+      <div class="reflection-block">
+        <div class="reflection-q">Antes de cada sesion, ?que revisare para detectar si estoy en riesgo de activacion?</div>
+        <div class="reflection-hint">Una pregunta concreta que te hagas antes de abrir el grafico.</div>
+        <textarea class="textarea" id="mapa-pregunta" placeholder="Antes de operar me preguntare: ..." rows="3"></textarea>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Save bar -->
+<div class="save-bar">
+  <div class="save-info">
+    <strong>Identifica tus Triggers</strong> · <span id="saveStatus">Guardado automaticamente</span>
+  </div>
+  <div class="save-actions">
+    <button class="save-btn secondary" onclick="downloadPDF()">PDF</button>
+    <button class="save-btn primary" id="saveBtn" onclick="manualSave()">Guardar</button>
+  </div>
+</div>
+
+<script>
+  // ——— Toggle opciones ———
+  function toggleOpt(el, group) {
+    const isBlue = el.classList.contains('blue-sel') || group === 'ext';
+    const isPurple = el.classList.contains('purple-sel') || group === 'int';
+    const wasSel = el.dataset.selected === '1';
+
+    if (wasSel) {
+      el.dataset.selected = '0';
+      el.style.borderColor = '';
+      el.style.background = '';
+      el.style.color = '';
+      const dot = el.querySelector('.opt-dot');
+      dot.style.background = '';
+      dot.style.borderColor = '';
+    } else {
+      el.dataset.selected = '1';
+      if (group === 'ext') {
+        el.style.borderColor = 'var(--blue-mid)';
+        el.style.background = 'var(--blue-dim)';
+        el.style.color = 'var(--text)';
+        el.querySelector('.opt-dot').style.background = 'var(--blue)';
+        el.querySelector('.opt-dot').style.borderColor = 'var(--blue)';
+      } else {
+        el.style.borderColor = 'var(--purple-mid)';
+        el.style.background = 'var(--purple-dim)';
+        el.style.color = 'var(--text)';
+        el.querySelector('.opt-dot').style.background = 'var(--purple)';
+        el.querySelector('.opt-dot').style.borderColor = 'var(--purple)';
+      }
+    }
+    autoSave();
+  }
+
+  // ——— IDs de textareas ———
+  const FIELDS = ['ext-otros','ext-principal','int-otros','int-principal','mapa-t1','mapa-t2','mapa-t3','mapa-cuerpo','mapa-pregunta'];
+
+  // ——— Guardar ———
+  function getState() {
+    const state = {};
+    FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) state[id] = el.value;
+    });
+    // Guardar opciones seleccionadas
+    const opts = document.querySelectorAll('.trigger-opt');
+    const selected = [];
+    opts.forEach((opt, i) => {
+      if (opt.dataset.selected === '1') selected.push(i);
+    });
+    state['_opts'] = selected;
+    return state;
+  }
+
+  function autoSave() {
+    try {
+      localStorage.setItem('mc_triggers_state', JSON.stringify(getState()));
+      document.getElementById('saveStatus').textContent = 'Guardado automaticamente';
+    } catch(e) {}
+  }
+
+  function manualSave() {
+    autoSave();
+    const btn = document.getElementById('saveBtn');
+    btn.textContent = 'Guardado';
+    btn.classList.add('saved');
+    setTimeout(() => {
+      btn.textContent = 'Guardar';
+      btn.classList.remove('saved');
+    }, 2000);
+  }
+
+  // ——— Cargar estado ———
+  window.addEventListener('load', () => {
+    try {
+      const saved = localStorage.getItem('mc_triggers_state');
+      if (!saved) return;
+      const state = JSON.parse(saved);
+      FIELDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && state[id] !== undefined) el.value = state[id];
+      });
+      // Restaurar opciones
+      if (state['_opts']) {
+        const opts = document.querySelectorAll('.trigger-opt');
+        state['_opts'].forEach(i => {
+          if (opts[i]) {
+            const group = opts[i].closest('[id^="ext"]') ? 'ext' : 'int';
+            opts[i].click(); // simula click
+          }
+        });
+      }
+    } catch(e) {}
+
+    // Auto-save en inputs
+    FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', autoSave);
+    });
+  });
+
+  // ——— PDF ———
+  function downloadPDF() {
+    window.print();
+  }
+</script>
+</body>
+</html>
