@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Revisiones — Método Consistente</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06060a;
+    --surface: #0e0e16;
+    --surface2: #14141e;
+    --border: rgba(255,255,255,0.06);
+    --border-active: rgba(212,167,58,0.35);
+    --accent: #d4a73a;
+    --accent-dim: rgba(212,167,58,0.07);
+    --accent-mid: rgba(212,167,58,0.18);
+    --accent-glow: rgba(212,167,58,0.15);
+    --green: #2ecc8a;
+    --green-dim: rgba(46,204,138,0.07);
+    --green-mid: rgba(46,204,138,0.18);
+    --red: #e84040;
+    --red-dim: rgba(232,64,64,0.07);
+    --red-mid: rgba(232,64,64,0.18);
+    --blue: #60a5fa;
+    --blue-dim: rgba(96,165,250,0.07);
+    --blue-mid: rgba(96,165,250,0.18);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.07);
+    --purple-mid: rgba(167,139,250,0.18);
+    --amber: #f5a623;
+    --amber-dim: rgba(245,166,35,0.07);
+    --amber-mid: rgba(245,166,35,0.18);
+    --text: #ede8df;
+    --text-mid: #8a8278;
+    --text-dim: #4a4540;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .header {
+    padding: 48px 40px 32px;
+    max-width: 780px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .header-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-tag::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+  .header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(38px, 6vw, 60px);
+    letter-spacing: 0.04em;
+    line-height: 0.95;
+    margin-bottom: 20px;
+  }
+  .header-title .accent { color: var(--accent); }
+  .header-desc {
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.7;
+    max-width: 520px;
+    border-left: 2px solid var(--accent);
+    padding-left: 16px;
+    font-style: italic;
+  }
+
+  .content-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 40px 40px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ——— MATRIZ ——— */
+  .matrix-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .matrix-card-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .matrix-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .matrix-subtitle {
+    font-size: 12px;
+    color: var(--text-mid);
+    font-style: italic;
+  }
+
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .matrix-table th {
+    padding: 14px 16px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  .matrix-table th:last-child { border-right: none; }
+  .matrix-table th.row-header {
+    text-align: left;
+    width: 28%;
+    color: var(--text-mid);
+    font-size: 12px;
+    padding-left: 24px;
+  }
+  .col-semanal { color: var(--blue); }
+  .col-mensual { color: var(--amber); }
+  .col-trimestral { color: var(--accent); }
+
+  .matrix-table td {
+    padding: 16px 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .matrix-table td:last-child { border-right: none; }
+  .matrix-table tr:last-child td { border-bottom: none; }
+  .matrix-table td.row-label {
+    text-align: left;
+    padding-left: 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .matrix-table td.row-label .row-sub {
+    display: block;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 400;
+    margin-top: 2px;
+    font-style: italic;
+  }
+
+  /* Badges de celda */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .badge-evaluar {
+    background: var(--green-dim);
+    border: 1px solid var(--green-mid);
+    color: var(--green);
+  }
+  .badge-documentar {
+    background: var(--blue-dim);
+    border: 1px solid var(--blue-mid);
+    color: var(--blue);
+  }
+  .badge-none {
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 18px;
+    letter-spacing: 0;
+    padding: 0;
+  }
+
+  /* Dot indicador */
+  .badge-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .badge-evaluar .badge-dot { background: var(--green); }
+  .badge-documentar .badge-dot { background: var(--blue); }
+
+  /* Leyenda */
+  .legend {
+    display: flex;
+    gap: 20px;
+    padding: 14px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: var(--text-mid);
+  }
+
+  /* ——— CARDS DE CADENCIA ——— */
+  .cadence-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  .cadence-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .cadence-header {
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cadence-freq {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .cadence-freq.blue { color: var(--blue); }
+  .cadence-freq.amber { color: var(--amber); }
+  .cadence-freq.accent { color: var(--accent); }
+  .cadence-when {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .cadence-body { padding: 14px 18px 18px; }
+  .cadence-item {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .cadence-item:last-child { margin-bottom: 0; }
+  .cadence-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .cadence-dot.green { background: var(--green); }
+  .cadence-dot.blue { background: var(--blue); }
+  .cadence-dot.accent { background: var(--accent); }
+  .cadence-item-text { color: var(--text-mid); }
+  .cadence-item-text strong { color: var(--text); font-weight: 500; }
+  .cadence-item-tag {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .tag-evaluar { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-mid); }
+  .tag-doc { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue-mid); }
+
+  /* ——— PRINCIPIOS ——— */
+  .principle-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .principle-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .principle-list { display: flex; flex-direction: column; gap: 12px; }
+  .principle-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    background: var(--surface2);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .principle-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--accent);
+    line-height: 1;
+    flex-shrink: 0;
+    min-width: 20px;
+  }
+  .principle-text { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+  .principle-text strong { color: var(--text); font-weight: 500; }
+
+  /* ——— RESUMEN VISUAL ——— */
+  .timeline-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .timeline-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .timeline-item:last-child { margin-bottom: 0; }
+  .timeline-dot {
+    position: absolute;
+    left: -24px;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+  }
+  .timeline-dot.blue { background: var(--blue); }
+  .timeline-dot.amber { background: var(--amber); }
+  .timeline-dot.accent { background: var(--accent); }
+  .timeline-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .timeline-label.blue { color: var(--blue); }
+  .timeline-label.amber { color: var(--amber); }
+  .timeline-label.accent { color: var(--accent); }
+  .timeline-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+  }
+  .pill-evaluar { background: var(--green-dim); border: 1px solid var(--green-mid); color: var(--green); }
+  .pill-doc { background: var(--blue-dim); border: 1px solid var(--blue-mid); color: var(--blue); }
+  .pill-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 4px 0;
+    font-style: italic;
+  }
+
+  /* Save bar */
+  .save-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(6,6,10,0.96);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+  }
+  .save-info { font-size: 12px; color: var(--text-dim); }
+  .save-info strong { color: var(--text-mid); }
+  .save-actions { display: flex; gap: 8px; }
+  .save-btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .save-btn.primary { background: var(--accent); color: #06060a; }
+  .save-btn.primary:hover { background: #e0b840; }
+  .save-btn.secondary { background: var(--surface2); color: var(--text-mid); border: 1px solid var(--border); }
+
+  @media (max-width: 640px) {
+    .header, .content-wrap { padding-left: 18px; padding-right: 18px; }
+    .save-bar { padding: 10px 18px; }
+    .cadence-grid { grid-template-columns: 1fr; }
+    .matrix-table th, .matrix-table td { padding: 10px 8px; }
+    .badge { font-size: 10px; padding: 4px 7px; }
+  }
+
+  @media print {
+    .save-bar { display: none !important; }
+    body { background: white; color: black; padding-bottom: 0; }
+    body::before { display: none; }
+    .header { padding-top: 24px !important; }
+    .matrix-card, .cadence-card, .principle-card, .timeline-card {
+      background: white !important;
+      border-color: #ddd !important;
+      break-inside: avoid;
+    }
+    .matrix-table th, .matrix-table td { border-color: #eee !important; }
+    .matrix-table th.row-header, .matrix-table td.row-label { color: #333 !important; }
+    .cadence-item-text, .principle-text { color: #555 !important; }
+    .badge-evaluar { background: #e8faf3 !important; border-color: #b0e8cf !important; }
+    .badge-documentar { background: #e8f0ff !important; border-color: #b0c8f0 !important; }
+    .principle-item { background: #f9f9f9 !important; border-color: #eee !important; }
+    .legend { background: #f9f9f9 !important; border-color: #eee !important; }
+    .header-title { color: black; }
+    .header-desc { color: #666; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .matrix-card, .cadence-grid, .principle-card, .timeline-card {
+    animation: fadeUp 0.3s ease both;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag">Modulo 3 · Fisiologia y Sistemas · Referencia</div>
+  <h1 class="header-title">Sistema de<br><span class="accent">revisiones</span></h1>
+  <p class="header-desc">Que revisas, cuando lo revisas y como lo mides. No todas las revisiones son iguales — el horizonte temporal determina que puedes evaluar y que solo debes documentar.</p>
+</div>
+
+<div class="content-wrap">
+
+  <!-- MATRIZ PRINCIPAL -->
+  <div class="matrix-card">
+    <div class="matrix-card-header">
+      <div class="matrix-title">Que haces en cada revision</div>
+      <div class="matrix-subtitle">Evaluar = emitir juicio y tomar decisiones. Documentar = registrar sin juzgar.</div>
+    </div>
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th class="row-header">Metrica</th>
+          <th class="col-semanal">Semanal</th>
+          <th class="col-mensual">Mensual</th>
+          <th class="col-trimestral">Trimestral</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="row-label">
+            Habitos
+            <span class="row-sub">Rutinas de regulacion</span>
+          </td>
+          <td>
+            <span class="badge badge-evaluar">
+              <span class="badge-dot"></span>Evaluar
+            </span>
+          </td>
+          <td>
+            <span class="badge badge-evaluar">
+              <span class="badge-dot"></span>Evaluar
+            </span>
+          </td>
+          <td>
+            <span class="badge badge-evaluar">
+              <span class="badge-dot"></span>Evaluar
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="row-label">
+            Ejecucion
+            <span class="row-sub">Seguimiento del plan</span>
+          </td>
+          <td>
+            <span class="badge badge-documentar">
+              <span class="badge-dot"></span>Documentar
+            </span>
+          </td>
+          <td>
+            <span class="badge badge-evaluar">
+              <span class="badge-dot"></span>Evaluar
+            </span>
+          </td>
+          <td>
+            <span class="badge badge-evaluar">
+              <span class="badge-dot"></span>Evaluar
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="row-label">
+            Resultados
+            <span class="row-sub">PnL y metricas</span>
+          </td>
+          <td>
+            <span class="badge-none">—</span>
+          </td>
+          <td>
+            <span class="badge badge-documentar">
+              <span class="badge-dot"></span>Documentar
+            </span>
+          </td>
+          <td>
+            <span class="badge badge-evaluar">
+              <span class="badge-dot"></span>Evaluar
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="legend">
+      <div class="legend-item">
+        <span class="badge badge-evaluar" style="font-size:10px; padding:3px 8px;">
+          <span class="badge-dot"></span>Evaluar
+        </span>
+        <span>Analizar, sacar conclusiones y ajustar</span>
+      </div>
+      <div class="legend-item">
+        <span class="badge badge-documentar" style="font-size:10px; padding:3px 8px;">
+          <span class="badge-dot"></span>Documentar
+        </span>
+        <span>Solo registrar — sin juicio ni decision</span>
+      </div>
+      <div class="legend-item">
+        <span style="color:var(--text-dim); font-size:16px; line-height:1;">—</span>
+        <span>No aplica en esta cadencia</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRES CADENCIAS -->
+  <div class="cadence-grid">
+
+    <!-- SEMANAL -->
+    <div class="cadence-card">
+      <div class="cadence-header">
+        <div class="cadence-freq blue">Semanal</div>
+        <div class="cadence-when">Cada domingo</div>
+      </div>
+      <div class="cadence-body">
+        <div class="cadence-item">
+          <div class="cadence-dot green"></div>
+          <div class="cadence-item-text">
+            <strong>Habitos</strong>
+            <span class="cadence-item-tag tag-evaluar">Evaluar</span>
+            <br>Cuantos dias los cumpliste. Que fallo. Que ajustas.
+          </div>
+        </div>
+        <div class="cadence-item">
+          <div class="cadence-dot blue"></div>
+          <div class="cadence-item-text">
+            <strong>Ejecucion</strong>
+            <span class="cadence-item-tag tag-doc">Documentar</span>
+            <br>Registra cuantas operaciones siguieron el plan. Sin valorar por qué.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENSUAL -->
+    <div class="cadence-card">
+      <div class="cadence-header">
+        <div class="cadence-freq amber">Mensual</div>
+        <div class="cadence-when">Ultimo dia del mes</div>
+      </div>
+      <div class="cadence-body">
+        <div class="cadence-item">
+          <div class="cadence-dot green"></div>
+          <div class="cadence-item-text">
+            <strong>Habitos</strong>
+            <span class="cadence-item-tag tag-evaluar">Evaluar</span>
+            <br>Vision del mes completo. Tendencia y consistencia.
+          </div>
+        </div>
+        <div class="cadence-item">
+          <div class="cadence-dot blue"></div>
+          <div class="cadence-item-text">
+            <strong>Ejecucion</strong>
+            <span class="cadence-item-tag tag-evaluar">Evaluar</span>
+            <br>Analiza el seguimiento del plan. Identifica patrones de error.
+          </div>
+        </div>
+        <div class="cadence-item">
+          <div class="cadence-dot accent"></div>
+          <div class="cadence-item-text">
+            <strong>Resultados</strong>
+            <span class="cadence-item-tag tag-doc">Documentar</span>
+            <br>Anota PnL y metricas. No saques conclusiones — la muestra es pequeña.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRIMESTRAL -->
+    <div class="cadence-card">
+      <div class="cadence-header">
+        <div class="cadence-freq accent">Trimestral</div>
+        <div class="cadence-when">Cada 3 meses</div>
+      </div>
+      <div class="cadence-body">
+        <div class="cadence-item">
+          <div class="cadence-dot green"></div>
+          <div class="cadence-item-text">
+            <strong>Habitos</strong>
+            <span class="cadence-item-tag tag-evaluar">Evaluar</span>
+            <br>Vision larga. Que habitos solidificaste y cuales siguen fallando.
+          </div>
+        </div>
+        <div class="cadence-item">
+          <div class="cadence-dot blue"></div>
+          <div class="cadence-item-text">
+            <strong>Ejecucion</strong>
+            <span class="cadence-item-tag tag-evaluar">Evaluar</span>
+            <br>Correlacion entre habitos y calidad de ejecucion.
+          </div>
+        </div>
+        <div class="cadence-item">
+          <div class="cadence-dot accent"></div>
+          <div class="cadence-item-text">
+            <strong>Resultados</strong>
+            <span class="cadence-item-tag tag-evaluar">Evaluar</span>
+            <br>Ahora si — muestra suficiente para sacar conclusiones validas.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- POR QUE ESTE SISTEMA -->
+  <div class="principle-card">
+    <div class="principle-title">Por que funciona asi</div>
+    <div class="principle-list">
+      <div class="principle-item">
+        <div class="principle-num">1</div>
+        <div class="principle-text">
+          <strong>Los resultados no se evaluan hasta el trimestre</strong> porque una semana o un mes no son muestra suficiente. Evaluar resultados con poca muestra lleva a decisiones equivocadas — cambias cosas que no debes cambiar o mantienes cosas que deben cambiar.
+        </div>
+      </div>
+      <div class="principle-item">
+        <div class="principle-num">2</div>
+        <div class="principle-text">
+          <strong>La ejecucion se evalua mensualmente</strong> porque es lo que tu controlas directamente. No controlas si el mercado te da operaciones, ni si las operaciones ganan. Si controlas si seguiste el plan — y eso tiene sentido revisarlo cada mes.
+        </div>
+      </div>
+      <div class="principle-item">
+        <div class="principle-num">3</div>
+        <div class="principle-text">
+          <strong>Los habitos se revisan cada semana</strong> porque son la base de todo lo demas. Si los habitos fallan, la ejecucion se deteriora antes de que los resultados lo reflejen. La semana es el ciclo minimo para detectar y corregir.
+        </div>
+      </div>
+      <div class="principle-item">
+        <div class="principle-num">4</div>
+        <div class="principle-text">
+          <strong>Documentar no es evaluar.</strong> Cuando algo se documenta sin evaluarse, el objetivo es construir historial. Cuando llegue el momento de evaluar, tendras datos reales — no sensaciones de ese momento.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUMEN TIMELINE -->
+  <div class="timeline-card">
+    <div class="timeline-title">Como se anidan las revisiones</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot blue"></div>
+        <div class="timeline-label blue">4 revisiones semanales</div>
+        <div class="timeline-pills">
+          <span class="pill pill-evaluar">Habitos</span>
+          <span class="pill pill-doc">Ejecucion (doc.)</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot amber"></div>
+        <div class="timeline-label amber">1 revision mensual</div>
+        <div class="timeline-pills">
+          <span class="pill pill-evaluar">Habitos</span>
+          <span class="pill pill-evaluar">Ejecucion</span>
+          <span class="pill pill-doc">Resultados (doc.)</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot accent"></div>
+        <div class="timeline-label accent">1 revision trimestral</div>
+        <div class="timeline-pills">
+          <span class="pill pill-evaluar">Habitos</span>
+          <span class="pill pill-evaluar">Ejecucion</span>
+          <span class="pill pill-evaluar">Resultados</span>
+          <span class="pill-label">— revision completa</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="save-bar">
+  <div class="save-info">
+    <strong>Sistema de Revisiones</strong> · <span>Metodo Consistente</span>
+  </div>
+  <div class="save-actions">
+    <button class="save-btn secondary" onclick="window.print()">PDF</button>
+  </div>
+</div>
+
+</body>
+</html>
